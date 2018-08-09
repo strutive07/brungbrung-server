@@ -3,6 +3,7 @@ const router = express.Router();
 
 const auth = require('basic-auth');
 const jwt = require('jsonwebtoken');
+const urlencode = require('urlencode');
 
 const register = require('../functions/register');
 const login = require('../functions/login');
@@ -20,107 +21,221 @@ const config = require('../config/config');
 
 
 router.post('/create', (req, res) => {
-        var quest_id = req.body.quest_id;
+        var quest_name = req.body.quest_name;
         var request_person_id = req.body.request_person_id;
         var title = req.body.title;
         var context = req.body.context;
-        var purpose = req.body.purpose;
         var location = req.body.location;
-        var difficulty = req.body.difficulty;
-        var reward = req.body.reward;
+        var people_num_max = req.body.people_num_max;
+        var people_num = 0;
 
             db.connectDB().then(
-                quest_info.create_quest(quest_id, request_person_id, title, context, purpose, location, difficulty, reward)
+                quest_info.create_quest(quest_name, request_person_id, title, context, location, people_num_max, people_num)
                     .then(result => {
                         res.status(result.status).json({message: result.message});
                     })
-                    .catch(err => {console.log('err : ' + err);
+                    .catch(err => {
+                        console.log('err : ' + err);
                         res.status(err.status).json({message: err.message});
                     })
             );
     });
 
+/**
+ * @swagger
+ * /room/create:
+ *   post:
+ *     summary: 행사 추가하기.
+ *     tags: [Room]
+ *     parameters:
+ *     - name: quest_name
+ *       in: body
+ *       description: >-
+ *          행사 이름
+ *       required: true
+ *       default: None
+ *       type: string
+ *     - name: request_person_id
+ *       in: body
+ *       description: >-
+ *          주최자 이름(단체 이름)
+ *       required: true
+ *       default: None
+ *       type: string
+ *     - name: title
+ *       in: body
+ *       description: >-
+ *          행사 주제
+ *       required: true
+ *       default: None
+ *       type: string
+ *     - name: context
+ *       in: body
+ *       description: >-
+ *          행사 설명
+ *       required: true
+ *       default: None
+ *       type: string
+ *     - name: location
+ *       in: body
+ *       description: >-
+ *          행사 장소
+ *       required: true
+ *       default: None
+ *       type: string
+ *     - name: people_num_max
+ *       in: body
+ *       description: >-
+ *          행사 최대 인원
+ *       required: true
+ *       default: None
+ *       type: integer
+ *     responses:
+ *       200:
+ *         description: 행사 추가하기 성공.
+ *         example:
+ *           message : "Sucessfully register quest"
+ *       409:
+ *         description: 이미 등록된 행사.
+ *         example:
+ *           message :  "Already Registered"
+ *       500:
+ *         description: 서버 에러.
+ *         example:
+ *           message :  "Server Error"
+ *
+ */
 
-    router.get('/:id/:quest_id', (req, res) => {
-        if (checkToken(req)) {
-            var quest_status = -1;
-            var tmp_quest_info;
+
+router.post('/search/:sub_string', (req, res) => {
+    var sub_string = urlencode.decode(req.params.sub_string);
+    console.log(sub_string);
+    db.connectDB().then(
+        quest_info.search(sub_string)
+            .then(results=>
+                res.status(200).json({message: "success", results:results})
+            ).catch(err => {
+            console.log('err : ' + err);
+            res.status(err.status).json({message: err.message});
+        }));
+});
+
+/**
+ * @swagger
+ * /room/search/{sub_string}:
+ *   post:
+ *     summary: 행사 검색하기.
+ *     tags: [Room]
+ *     parameters:
+ *     - name: sub_string
+ *       in: path
+ *       description: >-
+ *          검색할 부분 문자열
+ *       required: true
+ *       default: None
+ *       type: string
+ *     responses:
+ *       200:
+ *         description: 검색 성공. 검색 성공이 무조건 아이템이 존재함을 설명하지는 않음.
+ *         example:
+ *           message : "Sucessfully register quest"
+ *           results: "results As JSON"
+ *       500:
+ *         description: 서버 에러.
+ *         example:
+ *           message :  "Internal Server Error !"
+ *
+ */
+
+
+router.post('/enter/:id/:objId', (req, res) => {
+    if (checkToken(req)) {
+        const id = req.params.id;
+        const objId = req.params.objId;
+        if(id && objId){
             db.connectDB().then(
-                user_quest_bool.get_one_quest_bool(req.params.id)
-                    .then(result => {
-                        console.log('result : ' + result);
-                        var quest_num = Math.floor(req.params.quest_id/10) * 2 + req.params.quest_id % 10 - 1;
-                        console.log(quest_num + ' : ' + req.params.quest_id);
-                        quest_status = result.quest_bool[quest_num];
-                        return quest_info.get_one_quest(req.params.quest_id);
-                    }).then(result => {
-                        console.log('result hoho : ' + result);
-                        tmp_quest_info = result;
-                        console.log('tmp_quest_info : ' + tmp_quest_info);
-                        return profile.GetProfile(tmp_quest_info.request_person_id)
-                    }).then(result => {
-                        res.status(200).json({quest_status: quest_status, quest_info : tmp_quest_info, request_person_info : result});
-                    })
-                    .catch(err => {console.log('err : ' + err);
+                quest_info.enter_quest(id, objId)
+                    .then(user =>{
+
+                    }).catch(err => {
+                        console.log('err : ' + err);
                         res.status(err.status).json({message: err.message});
-                    })
-            );
-        } else {
-            res.status(401).json({message: 'Invalid Token! '});
-        }
-    });
-
-
-    router.post('/start/:id/:quest_id', (req, res) => {
-        if (checkToken(req)) {
+                    }));
             db.connectDB().then(
-                quest_info.get_one_quest(req.params.quest_id)
-                    .then(result => {
-                        if(result.people_num >= 6){
-                            res.status(501).json({message: '인원 초과', result : -1});
-                        }else{
-                            return quest_info.people_num_change(req.params.quest_id, 1);
-                        }
-                    })
-                    .then(result => {
-                        if(result.message === 1){
-                            return user_quest_bool.set_one_quest_bool_in_progress(req.params.id, req.params.quest_id);
-                        }else{
-                            res.status(401).json({message: 'Invalid Token! '});
-                        }
-                    })
-                    .then(result => {
-                        res.status(result.status).json({message: result.message, user_quest_table : result.user_quest_table});
-                    })
-                    .catch(err => {console.log('err : ' + err);
-                        res.status(err.status).json({message: err.message});
-                    })
-            );
-        } else {
-            res.status(401).json({message: 'Invalid Token! '});
-        }
-    });
-
-
-    router.post('/push/:id/:older_id/:quest_id', (req, res) => {
-        if (checkToken(req)) {
-            var junior_json;
-            db.connectDB().then(profile.GetProfile(req.params.id)
-                .then(result =>{
-                    junior_json = {name : result.name, phone_number : result.phone_number, difficulty : (req.params.quest_id)%10, quest_id : req.params.quest_id ,id : req.params.id};
-                    return elder_user_quest_accept_list.push_one_quest_list_in_progress(req.params.older_id, junior_json)
-                })
-                .then( result =>
-                    res.status(result.status).json({message: result.message, result : result.elder_user_accept_list})
-                )
-                .catch(err => {
+                quest_info.append_user_in_quest(id, objId)
+                    .then(room => {
+                        res.status(200).json({message: 'success'})
+                    }).catch(err => {
+                    console.log('err : ' + err);
                     res.status(err.status).json({message: err.message});
                 })
             );
-        } else {
+
+        }else{
             res.status(401).json({message: 'Invalid Token! '});
         }
-    });
+
+    } else {
+        res.status(401).json({message: 'Invalid Token! '});
+    }
+});
+
+/**
+ * @swagger
+ * /room/enter/{id}/{objId}:
+ *   post:
+ *     summary: 행사 참여하기.
+ *     tags: [Room]
+ *     parameters:
+ *     - name: id
+ *       in: path
+ *       description: >-
+ *          참여할 유저
+ *       required: true
+ *       default: None
+ *       type: string
+ *     - name: objId
+ *       in: path
+ *       description: >-
+ *          참여할 행사의 ObjId 의 String
+ *       required: true
+ *       default: None
+ *       type: string
+ *     responses:
+ *       200:
+ *         description: 참여 성공.
+ *         example:
+ *           message : "success"
+ *       401:
+ *         description: 토큰과 유저 일치 하지 않음.
+ *         example:
+ *           message :  "Invalid Token! "
+ *       500:
+ *         description: 서버 에러.
+ *         example:
+ *           message :  "Internal Server Error !"
+ *
+ */
+
+    // router.post('/push/:id/:older_id/:quest_id', (req, res) => {
+    //     if (checkToken(req)) {
+    //         var junior_json;
+    //         db.connectDB().then(profile.GetProfile(req.params.id)
+    //             .then(result =>{
+    //                 junior_json = {name : result.name, phone_number : result.phone_number, difficulty : (req.params.quest_id)%10, quest_id : req.params.quest_id ,id : req.params.id};
+    //                 return elder_user_quest_accept_list.push_one_quest_list_in_progress(req.params.older_id, junior_json)
+    //             })
+    //             .then( result =>
+    //                 res.status(result.status).json({message: result.message, result : result.elder_user_accept_list})
+    //             )
+    //             .catch(err => {
+    //                 res.status(err.status).json({message: err.message});
+    //             })
+    //         );
+    //     } else {
+    //         res.status(401).json({message: 'Invalid Token! '});
+    //     }
+    // });
 
     // router.post('/delete/:id/:index', (req, res) => {
     //     if (checkToken(req)) {

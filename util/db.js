@@ -31,6 +31,7 @@ function connect () {
 })
 }
 
+
 exports.connectDB = function () {
   return new Promise((resolve, reject) => {
     connect().then( function (connection) {

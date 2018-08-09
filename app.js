@@ -5,8 +5,8 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var index = require('./routes/index');
-var users = require('./routes/users');
+// var index = require('./routes/index');
+// var users = require('./routes/users');
 
 var app = express();
 const router = express.Router();
@@ -25,15 +25,53 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 var login_register = require('./routes/login_register');
-var quest = require('./routes/quest');
-var older_quest = require('./routes/older_quest');
+var room = require('./routes/quest');
+
+const swaggerJSDoc = require('swagger-jsdoc')
+// Swagger definition
+// You can set every attribute except paths and swagger
+// https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md
+var swaggerDefinition = {
+    info: { // API informations (required)
+        title: '부릉부릉 - 사필귀정', // Title (required)
+        version: '1.0.0', // Version (required)
+        description: 'API Document', // Description (optional)
+    },
+    host: 'localhost:23002', // Host (optional)
+    basePath: '/api/v1g1', // Base path (optional)
+    securityDefinitions: {
+        jwt: {
+            type: 'apiKey',
+            name: 'x-access-token',
+            in: 'header'
+        }
+    },
+    security: [
+        { jwt: [] }
+    ]
+}
+
+// Options for the swagger docs
+var options = {
+    // Import swaggerDefinitions
+    swaggerDefinition: swaggerDefinition,
+    // Path to the API docs
+    apis: [
+        './routes/login_register.js',
+        './routes/quest.js'
+    ],
+}
+
+// Initialize swagger-jsdoc -> returns validated swagger spec in json format
+
+const swaggerUi = require('swagger-ui-express');
+var swaggerSpec = swaggerJSDoc(options)
+
+app.use('/apidoc', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 
 app.use('/api/v1g1/user', login_register);
-app.use('/api/v1g1/quest',quest);
-app.use('/api/v1g1/senior',older_quest);
-app.use('/', index);
-app.use('/users', users);
-app.use('/apidoc', express.static('apidoc'));
+app.use('/api/v1g1/room', room);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -41,6 +79,9 @@ app.use(function(req, res, next) {
   err.status = 404;
   next(err);
 });
+console.log('hi');
+
+
 
 // error handler
 app.use(function(err, req, res, next) {

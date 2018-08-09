@@ -14,71 +14,90 @@
 
 //의뢰인 이름, 전화번호는 선배 db 에서 불러오기. request_person_Id 로 불러옴.
 const quest_info = require('../models/quest_info');
+const user = require('../models/user');
 const bcrypt = require('bcryptjs');
 const db = require('mongodb');
+var mongoose = require('mongoose');
 
-exports.create_quest = (quest_id,request_person_id, title, context, purpose, location, difficulty, reward) =>
+exports.create_quest = (quest_name, request_person_id, title, context, location, people_num_max, people_num) =>
     new Promise(((resolve, reject) => {
         const new_quest_info = new quest_info({
-            quest_id : quest_id,
+            quest_name : quest_name,
             request_person_id : request_person_id,
             title : title,
             context : context,
-            purpose : purpose,
             location : location,
-            difficulty : difficulty, //0 쉬움 1 어려움
-            reward : reward
+            people_num_max : people_num_max,
+            people_num : people_num,
+            users : []
         });
         new_quest_info.save().then(() => resolve({
-            status : 201,
+            status : 200,
             message : 'Sucessfully register quest'
         })).catch(err =>{
             if(err.code == 11000){
-                reject({ status: 409, message: 'User Already Registered !'});
+                reject({ status: 409, message: 'Already Registered'});
             }else{
-                reject({ status: 500, message: 'Inasdfasfahohohohohohohohoternal Server Error !' });
+                reject({ status: 500, message: 'Server Error' });
             }
         });
+
     }));
 
+exports.enter_quest = (auth_id, room_ObjId) =>
+    new Promise((resolve, reject) => {
+        user.find({auth_id : auth_id}).then(results => {
+            var user = results[0];
+            console.log(user);
+            user.room_string.push(room_ObjId);
+            console.log(user);
+            return user.save();
+        }).then(user => {
+            console.log(user);
+            resolve(user);
+        }).catch(err => {
+            console.log("err : " + err);
+            reject({ status: 500, message: 'Internal Server Error !' })
+        })});
 
-
-
+exports.append_user_in_quest = (auth_id, room_ObjId) =>
+    new Promise((resolve, reject) => {
+        quest_info.find({_id : mongoose.Types.ObjectId(room_ObjId)}).then(results => {
+            var room = results[0];
+            console.log(room);
+            room.people_num = room.people_num + 1;
+            room.users.push(auth_id);
+            return room.save();
+        }).then(room => resolve(room))
+            .catch(err => {
+                console.log("err : " + err);
+                reject({ status: 501, message: 'Internal Server Error !' })
+            })});
 exports.get_all_quest = () =>
     new Promise((resolve, reject) => {
         quest_info.find().then(results =>
             resolve(results)
         ).catch(err => {
-            
             reject({ status: 500, message: 'Internal Server Error !' })
         })});
 
 exports.get_one_quest = id =>
     new Promise((resolve, reject) => {
-        quest_info.find({quest_id : id}).then(results =>{
+        quest_info.find({'_id' : [mongoose.Types.ObjectId(room_ObjId)]})
+            .then(results =>{
             resolve(results[0]);
         }).catch(err => {
             ////console.log("err : " + err);
             reject({ status: 500, message: 'Internal Server Error !' })
         })});
-
-exports.people_num_change = (quest_id, dn) =>
+exports.search = sub_string =>
     new Promise((resolve, reject) => {
-        quest_info.find({quest_id : quest_id}).then(results => {
-            var re_quest_info = results[0];
-            var people_num = results[0].people_num;
-            people_num = people_num + dn;
-            quest_info.update({quest_id : quest_id}, {$set : {people_num : people_num}}, function(err, output){
-                if(err){
-                    //console.log(err);
-                }
-                //console.log('output : ' + JSON.stringify(output));
-            });
-            return results[0];
-        }).then( results =>
-            resolve({ status: 200, message: 1})
-        ).catch(err => {
-            //console.log("err : " + err);
-            reject({ status: 500, message: 'Internal Server Error !' })
-        })});
+       quest_info.find({$or :[{quest_name:{$regex:sub_string},}, {title:{$regex:sub_string}}, {context:{$regex:sub_string}}, {request_person_id:{$regex:sub_string}}]})
+           .then(results => {
+               resolve(results);
+           }).catch(err => {
+           console.log("err : " + err);
+           reject({ status: 500, message: 'Internal Server Error !' })
+       })
+    });
 

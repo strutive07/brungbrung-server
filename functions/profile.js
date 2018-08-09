@@ -2,6 +2,7 @@
 
 const user = require('../models/user');
 
+
 exports.GetProfile = id =>
     new Promise((resolve, reject) => {
        user.find({auth_id : id}).then(results =>

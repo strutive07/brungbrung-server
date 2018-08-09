@@ -22,7 +22,8 @@ const config = require('../config/config');
     router.post('/authenticate', (req, res) => {
         var id = req.body.id;
         var password = req.body.password;
-
+        console.log(id);
+        console.log(password);
         if (id && password) {
             db.connectDB().then(login.LoginUser(id, password)
                 .then(result => {
@@ -42,22 +43,84 @@ const config = require('../config/config');
     router.get('/authenticate', (req, res) => {
         res.redirect('/');
     });
+/**
+ * @swagger
+ * tags:
+ *   name: AUTH
+ *   description: return auth
+ * definitions:
+ *   AUTH:
+ *     type: object
+ *     required:
+ *       - content
+ *     properties:
+ *       id:
+ *         type: string
+ *         description: user auth_id
+ *       token:
+ *         type: string
+ *         description: Token 값
+ */
+
+/**
+ * @swagger
+ * /user/authenticate:
+ *   post:
+ *     summary: 로그인. Return UserID, token as JSON
+ *     tags: [User]
+ *     parameters:
+ *     - name: id
+ *       in: body
+ *       description: >-
+ *          로그인에 필요한 user auth_id
+ *       required: true
+ *       default: None 없음!
+ *       type: string
+ *       example:
+ *          id: "dev1234"
+ *          password: "1234"
+ *     - name: password
+ *       in: body
+ *       description: >-
+ *          로그인에 필요한 user password
+ *       required: true
+ *       default: None 없음!
+ *       type: string
+ *       example:
+ *          id: "dev1234"
+ *          password: "1234"
+ *     responses:
+ *       200:
+ *         description: 로그인 기능.
+ *         schema:
+ *           $ref: '#/definitions/AUTH'
+ *       404:
+ *         description: 일치하는 유저 없음.
+ *         example:
+ *            "message": "User Not Found !"
+ *       401:
+ *         description: 비밀번호 일치하지 않음.
+ *         example:
+ *            "message": "Invalid Credentials !"
+ *
+ */
 
 
-    router.post('/register', (req, res) => {
+
+router.post('/register', (req, res) => {
         const name = req.body.name;
         var id = req.body.id;
         const password = req.body.password;
-        const phone_number = req.body.phone_number;
+
         console.log('name : ' + name);
         console.log('id : ' + id);
         console.log('password : ' + password);
-        console.log('phone_number : ' + phone_number);
+
         if (!name || !id || !password || !name.trim() || !id.trim() || !password.trim()) {
             res.status(400).json({message: 'Invalid Request !'});
         } else {
 
-            db.connectDB().then(register.RegisterUser(name, id, password, phone_number)
+            db.connectDB().then(register.RegisterUser(name, id, password)
                 .then(result => {
                     console.log('name->' + name);
                     console.log('email->' + id);
@@ -71,75 +134,118 @@ const config = require('../config/config');
         }
     });
 
-    // 해야할 일
-    // 퀘스트 리스트
-    // 선배쪽 퀘스트 받은사람 정보 보여주기
-    // 퀘스트 시작하기
-    // 퀘스트 1개 정보 + 의뢰자 정보 합쳐서 보내주기
-    // 랭킹
-    // 첫 로그인시 선배 정하기
-    // 활약의 발자취
+/**
+ * @swagger
+ * /user/register:
+ *   post:
+ *     summary: 회원가입. Return message.
+ *     tags: [User]
+ *     parameters:
+ *     - name: name
+ *       in: body
+ *       description: >-
+ *          회원가입에 필요한 유저 이름.
+ *       required: true
+ *       default: None 없음!
+ *       type: string
+ *       example:
+ *          name : "장원준"
+ *          id: "dev1234"
+ *          password: "1234"
+ *     - name: id
+ *       in: body
+ *       description: >-
+ *          회원가입에 필요한 ID
+ *       required: true
+ *       default: None 없음!
+ *       type: string
+ *       example:
+ *          name : "장원준"
+ *          id: "dev1234"
+ *          password: "1234"
+ *     - name: password
+ *       in: body
+ *       description: >-
+ *          회원가입에 필요한 Password
+ *       required: true
+ *       default: None 없음!
+ *       type: string
+ *       example:
+ *          name : "장원준"
+ *          id: "dev1234"
+ *          password: "1234"
+ *     responses:
+ *       200:
+ *         description: 회원가입.
+ *         example:
+ *           message : "Sucessfully register user"
+ *       404:
+ *         description: 이미 있는 회원.
+ *         example:
+ *           message :  "이미 존재하는 사용자 입니다."
+ *
+ */
 
-    router.post('/older_register', (req, res) => {
-        const name = req.body.name;
-        var id = req.body.id;
-        const password = req.body.password;
-        const phone_number = req.body.phone_number;
-        const quest_id = req.body.quest_id;
-        console.log("quest_id : "+ quest_id);
-        if (!name || !id || !password || !name.trim() || !id.trim() || !password.trim()) {
-            res.status(400).json({message: 'Invalid Request !'});
-        } else {
-
-            db.connectDB().then(register.register_elder_user(name, id, password, phone_number, quest_id)
-                .then(result => elder_user_quest_accept_list.register_user_quest_bool(id))
-                .then(result => {
-                    console.log('name->' + name);
-                    console.log('email->' + id);
-                    res.setHeader('Location', '/users' + id);
-                    res.status(result.status).json({message: result.message});
-                })
-                .catch(err => {
-                    res.status(err.status).json({message: err.message});
-                })
-            );
-        }
-    });
 
 
-    router.get('/:id', (req, res) => {
-        if (checkToken(req)) {
-            db.connectDB().then(
-                profile.GetProfile(req.params.id)
-                    .then(result => {
-                        console.log('result : ' + result);
-                        res.json(result);
-                    })
-                    .catch(err => {console.log('err : ' + err);
-                        res.status(err.status).json({message: err.message});
-                    })
-            );
-
-        } else {
-            res.status(401).json({message: 'Invalid Token! '});
-        }
-    });
-
-    router.get('/users_test/:id', (req, res) => {
-        var id = req.params.id;
-        // if (checkToken(req)) {
+router.post('/profile/:id', (req, res) => {
+    if (checkToken(req)) {
         db.connectDB().then(
-            profile.GetProfile(id)
+            profile.GetProfile(req.params.id)
                 .then(result => {
                     console.log('result : ' + result);
                     res.json(result);
                 })
-                .catch(err => {
-                    console.log('err : ' + err);
+                .catch(err => {console.log('err : ' + err);
                     res.status(err.status).json({message: err.message});
                 })
         );
-    });
+
+    } else {
+        res.status(401).json({message: 'Invalid Token! '});
+    }
+});
+/**
+ * @swagger
+ * /user/profile/{id}:
+ *   post:
+ *     summary: 회원가입. Return message.
+ *     tags: [User]
+ *     parameters:
+ *     - name: id
+ *       in: path
+ *       description: >-
+ *          유저 이름
+ *       required: true
+ *       default: None 없음!
+ *       type: string
+ *     responses:
+ *       200:
+ *         description: 유저 정보 가져오기 성공.
+ *         example:
+ *           message : "Sucessfully register user"
+ *       401:
+ *         description: 토큰과 유저 일치 하지 않음.
+ *         example:
+ *           message :  "Invalid Token! "
+ *
+ */
+
+    // router.get('/users_test/:id', (req, res) => {
+    //     var id = req.params.id;
+    //     // if (checkToken(req)) {
+    //     db.connectDB().then(
+    //         profile.GetProfile(id)
+    //             .then(result => {
+    //                 console.log('result : ' + result);
+    //                 res.json(result);
+    //             })
+    //             .catch(err => {
+    //                 console.log('err : ' + err);
+    //                 res.status(err.status).json({message: err.message});
+    //             })
+    //     );
+    // });
 
     router.post('/changepassword/:id', (req, res) => {
         if (checkToken(req)) {
