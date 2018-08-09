@@ -81,15 +81,16 @@ exports.get_all_quest = () =>
             reject({ status: 500, message: 'Internal Server Error !' })
         })});
 
-exports.get_one_quest = id =>
+exports.get_one_quest = (room_ObjId) =>
     new Promise((resolve, reject) => {
-        quest_info.find({'_id' : [mongoose.Types.ObjectId(room_ObjId)]})
-            .then(results =>{
-            resolve(results[0]);
-        }).catch(err => {
-            ////console.log("err : " + err);
-            reject({ status: 500, message: 'Internal Server Error !' })
-        })});
+        quest_info.find({_id : mongoose.Types.ObjectId(room_ObjId)}).then(results => {
+            var room = results[0];
+            return room;
+        }).then(room => resolve(room))
+            .catch(err => {
+                console.log("err : " + err);
+                reject({ status: 501, message: 'Internal Server Error !' })
+            })});
 exports.search = sub_string =>
     new Promise((resolve, reject) => {
        quest_info.find({$or :[{quest_name:{$regex:sub_string},}, {title:{$regex:sub_string}}, {context:{$regex:sub_string}}, {request_person_id:{$regex:sub_string}}]})

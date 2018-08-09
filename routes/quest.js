@@ -217,6 +217,85 @@ router.post('/enter/:id/:objId', (req, res) => {
  *
  */
 
+router.get('/get_room/:objId', (req, res) => {
+    const objId = req.params.objId;
+    if(objId){
+        db.connectDB().then(
+            quest_info.get_one_quest(objId)
+                .then(results =>{
+                    res.status(200).json(results)
+                }).catch(err => {
+                console.log('err : ' + err);
+                res.status(err.status).json({message: err.message});
+            }));
+    }else{
+        res.status(401).json({message: 'Invalid Token! '});
+    }
+});
+
+/**
+ * @swagger
+ * tags:
+ *   name: RoomInfo
+ *   description: return RoomInfo
+ * definitions:
+ *   RoomInfo:
+ *     type: object
+ *     required:
+ *       - content
+ *     properties:
+ *       _id:
+ *         type: string
+ *         description: room Object Id
+ *       quest_name:
+ *         type: string
+ *         description: 행사 이름
+ *       request_person_id:
+ *          type: string
+ *          description: 주최자
+ *       title:
+ *          type: string
+ *          description: 행사 주제, 이름
+ *       context:
+ *          type: string
+ *          description: 행사 정보
+ *       location:
+ *          type: string
+ *          description: 행사 위치
+ *       people_num_max:
+ *          type: Integer
+ *          description: 최대 인원
+ *       people_num:
+ *          type: Integer
+ *          description: 현재 인
+ */
+
+/**
+ * @swagger
+ * /room/get_room/{objId}:
+ *   get:
+ *     summary: 행사 정보 가져오기.
+ *     tags: [Room]
+ *     parameters:
+ *     - name: objId
+ *       in: path
+ *       description: >-
+ *          정보를 가져올 행사의 ObjId 의 String
+ *       required: true
+ *       default: None
+ *       type: string
+ *     responses:
+ *       200:
+ *         description: 참여 성공.
+ *         schema:
+ *           $ref: '#/definitions/RoomInfo'
+ *       500:
+ *         description: 서버 에러.
+ *         example:
+ *           message :  "Internal Server Error !"
+ *
+ */
+
     // router.post('/push/:id/:older_id/:quest_id', (req, res) => {
     //     if (checkToken(req)) {
     //         var junior_json;
