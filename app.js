@@ -5,8 +5,8 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-// var index = require('./routes/index');
-// var users = require('./routes/users');
+
+
 
 var app = express();
 const router = express.Router();
@@ -93,5 +93,10 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+var SocketIo = require('socket.io');
+const socketEvent = require('./functions/chat');
+var io = SocketIo();
+app.io = io;
+socketEvent.sockets(io);
 
 module.exports = app;

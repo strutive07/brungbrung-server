@@ -8,7 +8,7 @@ const urlencode = require('urlencode');
 const register = require('../functions/register');
 const login = require('../functions/login');
 const user_quest_bool = require('../functions/user_quest_bool');
-const elder_user_quest_accept_list= require('../functions/elder_user_quest_accept_list');
+const elder_user_quest_accept_list= require('../functions/chat');
 const profile = require('../functions/profile');
 const quest_complete_flow = require('../functions/quest_complete_flow');
 const quest_info = require('../functions/quest_info');
@@ -153,18 +153,21 @@ router.post('/enter/:id/:objId', (req, res) => {
         const id = req.params.id;
         const objId = req.params.objId;
         if(id && objId){
-            db.connectDB().then(
-                quest_info.enter_quest(id, objId)
-                    .then(user =>{
-
-                    }).catch(err => {
-                        console.log('err : ' + err);
-                        res.status(err.status).json({message: err.message});
-                    }));
+            // db.connectDB().then(
+            //     quest_info.enter_quest(id, objId)
+            //         .then(user =>{
+            //
+            //         }).catch(err => {
+            //             console.log('err : ' + err);
+            //             res.status(err.status).json({message: err.message});
+            //         }));
             db.connectDB().then(
                 quest_info.append_user_in_quest(id, objId)
-                    .then(room => {
-                        res.status(200).json({message: 'success'})
+                    .then(function(room) {
+                        quest_info.enter_quest(id, room)
+                            .then(user => {
+                                res.status(200).json({message: "success", results:user})
+                            });
                     }).catch(err => {
                     console.log('err : ' + err);
                     res.status(err.status).json({message: err.message});
@@ -179,6 +182,8 @@ router.post('/enter/:id/:objId', (req, res) => {
         res.status(401).json({message: 'Invalid Token! '});
     }
 });
+
+
 
 /**
  * @swagger
@@ -338,6 +343,7 @@ router.get('/get_room/:objId', (req, res) => {
 
 
     function checkToken(req){
+        return true;
         const token = req.headers['x-access-token'];
         if(token){
             try{

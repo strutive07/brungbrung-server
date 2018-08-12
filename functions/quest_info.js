@@ -67,12 +67,15 @@ exports.append_user_in_quest = (auth_id, room_ObjId) =>
             console.log(room);
             room.people_num = room.people_num + 1;
             room.users.push(auth_id);
-            return room.save();
-        }).then(room => resolve(room))
-            .catch(err => {
+            room.save();
+            console.log(room);
+            resolve(room);
+            // return room;
+        }).catch(err => {
                 console.log("err : " + err);
                 reject({ status: 501, message: 'Internal Server Error !' })
             })});
+
 exports.get_all_quest = () =>
     new Promise((resolve, reject) => {
         quest_info.find().then(results =>

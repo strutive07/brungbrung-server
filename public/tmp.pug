@@ -1,0 +1,14 @@
+<head>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+var socket = io(); // TIP: io() with no args does auto-discovery
+socket.on('connect', function () { // TIP: you can avoid listening on `connect` and listen on events directly too!
+    socket.emit('event1', 'tobi');
+});
+</script>
+</head>
+<body>
+
+</body>
+

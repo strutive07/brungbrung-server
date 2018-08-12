@@ -58,9 +58,10 @@
                 text-align: center;
             }
     </style>
-        <script src="jquery.min.js"></script>
-        <script src="jquery-ui.min.js"></script>
-        <script src="js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+        <!--<script src="jquery-ui.min.js"></script>-->
+        <!--<script src="js/bootstrap.min.js"></script>-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
         <script type="text/javascript"></script>
 </head>
 <body>
@@ -71,7 +72,9 @@
                 <h1 style="text-align: center">퀘스트 완료!</h1>
                 <div class="wrapper">
                 <span class="group-btn">
-                    <a href="http://ssumon.com/" id="login_button" class="btn btn-primary btn-md">홈으로<i class="fa fa-sign-in"></i></a>
+                    <a id="login_button" class="btn btn-primary btn-md">홈으로<i class="fa fa-sign-in"></i></a>
+                    <a id="leave_button" class="btn btn-primary btn-md">leave_button<i class="fa fa-sign-in"></i></a>
+                    <a id="message_button" class="btn btn-primary btn-md">message_button<i class="fa fa-sign-in"></i></a>
                 </span>
                 </div>
                 </div>
@@ -80,10 +83,39 @@
     </div>
 </body>
 <script type="text/javascript">
+    var socket;
+    var url = 'http://localhost:23002'
 
+    socket = io.connect(url);
 
-$('body').on('click', '#login_button', function(){
-    location.href='http://ssumon.com/';
+    console.log(socket);
+    socket.on('connect', function (sockets) {
+        console.log(sockets);
     });
+    socket.on('init_data', function (data) {
+        console.log(data);
+    });
+    socket.on('receive_message', function (data) {
+        console.log(data);
+    });
+
+    $('body').on('click', '#login_button', function() {
+        console.log('login_button');
+        socket.emit('joinRoom', {id : 'dev1234', room_object_id : '5b6a5df2dc111638ab02b864'});
+    })
+
+    $('body').on('click', '#leave_button', function() {
+        console.log('leave_button');
+        socket.emit('leaveRoom', {id : 'dev1234', room_object_id : '5b6a5df2dc111638ab02b864'});
+    })
+    $('body').on('click', '#message_button', function() {
+        console.log('message_button');
+        socket.emit('send_message', {
+            id : 'dev1234',
+            room_object_id : '5b6a5df2dc111638ab02b864',
+            name : socket.id,
+            message : socket.id,
+        });
+    })
 </script>
 </html>
