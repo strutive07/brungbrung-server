@@ -314,7 +314,7 @@ router.get('/get_all_post/:room_ObjId/', (req, res) => {
 });
 /**
  * @swagger
- * /room/get_all_post/{room_ObjId}:
+ * /post/get_all_post/{room_ObjId}:
  *   get:
  *     summary: 행사 게시글 가져오기.
  *     tags: [Post]
