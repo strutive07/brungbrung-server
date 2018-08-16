@@ -83,39 +83,54 @@
     </div>
 </body>
 <script type="text/javascript">
+    // connect -> init_data 받아서 리스트에 뿌리기
+    // -> 데이터 전송시 로컬에서 리스트에 넣기. -> 다른사람 메세지 받으면 리스트에 넣기
     var socket;
-    var url = 'http://localhost:23002'
+    var url = 'http://13.124.86.54:23002/' // 이쪽으로 연결하면 됨.
 
     socket = io.connect(url);
 
     console.log(socket);
     socket.on('connect', function (sockets) {
-        console.log(sockets);
+        console.log(sockets); // 서버와 연결
     });
+
     socket.on('init_data', function (data) {
-        console.log(data);
+        console.log(data); // 그 채팅방의 이전 대화 데이터 불러옴
     });
+
     socket.on('receive_message', function (data) {
-        console.log(data);
+        console.log(data); // 메세지 하나 받음.
+        //자신이 쏘는 메세지는 자신한태는 안옴! 주의
+        //자신의 메세지는 그냥 버튼 누른후 로컬에서 리스트에 추가
     });
 
     $('body').on('click', '#login_button', function() {
         console.log('login_button');
-        socket.emit('joinRoom', {id : 'dev1234', room_object_id : '5b6a5df2dc111638ab02b864'});
+        socket.emit('joinRoom', {
+            id : 'dev1234', // 유저 id
+            room_object_id : '5b6a5df2dc111638ab02b864' // 행사 id
+        });
+        //채팅방 들어가는 코드
     })
 
     $('body').on('click', '#leave_button', function() {
         console.log('leave_button');
-        socket.emit('leaveRoom', {id : 'dev1234', room_object_id : '5b6a5df2dc111638ab02b864'});
+        socket.emit('leaveRoom', {
+            id : 'dev1234', // 유저 id
+            room_object_id : '5b6a5df2dc111638ab02b864' // 행사 id
+        });
+        //채팅방 나가는 코드
     })
     $('body').on('click', '#message_button', function() {
         console.log('message_button');
         socket.emit('send_message', {
             id : 'dev1234',
-            room_object_id : '5b6a5df2dc111638ab02b864',
-            name : socket.id,
-            message : socket.id,
+            room_object_id : '5b6a5df2dc111638ab02b864', // 행사 id 넣어주면 됨
+            name : socket.id, // 유저 네임 넣어주면됨
+            message : socket.id, // 메세지 넣어주면 됨.
         });
+        //메세지 보내는 코드.
     })
 </script>
 </html>
