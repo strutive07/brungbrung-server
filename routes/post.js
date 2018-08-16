@@ -70,7 +70,7 @@ router.post('/create', (req, res) => {
  *       required: true
  *       default: None
  *       type: string
- *     - name: user_name
+ *     - name: title
  *       in: body
  *       description: >-
  *          게시글 제목
@@ -98,6 +98,14 @@ router.post('/create', (req, res) => {
  *       required: true
  *       default: None
  *       type: string
+ *       example:
+ *	        room_id : "5b6e898a715e837293dfd7fd"
+ *	        user_auth_id : "dev1234"
+ *	        user_name : "장원준"
+ *	        title : "hi"
+ *	        context : "context hoho"
+ *	        images_cnt : 0
+ *	        images : []
  *     responses:
  *       200:
  *         description: 게시글 추가하기 성공.
@@ -119,7 +127,7 @@ router.post('/update', (req, res) => {
     var images_array = req.body.images;
 
     db.connectDB().then(
-        post_functions.update_post(room_id, title,context,images_cnt,images_cnt,images_array)
+        post_functions.update_post(room_id,post_ObjId, title,context,images_cnt,images_array)
             .then(result => {
                 res.status(200).json({message: "success", results: result});
             })
@@ -132,7 +140,7 @@ router.post('/update', (req, res) => {
 
 /**
  * @swagger
- * /post/create:
+ * /post/update:
  *   post:
  *     summary: 게시글 수정하기.
  *     tags: [Post]
@@ -144,21 +152,14 @@ router.post('/update', (req, res) => {
  *       required: true
  *       default: None
  *       type: string
- *     - name: user_auth_id
+ *     - name: post_ObjId
  *       in: body
  *       description: >-
- *          게시글 작성자 id
+ *          게시글 Object Id
  *       required: true
  *       default: None
  *       type: string
- *     - name: user_name
- *       in: body
- *       description: >-
- *          게시글 작성자 name
- *       required: true
- *       default: None
- *       type: string
- *     - name: user_name
+ *     - name: title
  *       in: body
  *       description: >-
  *          게시글 제목
@@ -186,11 +187,18 @@ router.post('/update', (req, res) => {
  *       required: true
  *       default: None
  *       type: string
+ *       example:
+ *	        room_id : "5b6e898a715e837293dfd7fd"
+ *	        post_ObjId : "5b7566f34a3c915802e70580"
+ *	        title : "hi hoho changed"
+ *	        context : "context hoho"
+ *	        images_cnt : 0
+ *	        images : []
  *     responses:
  *       200:
- *         description: 게시글 추가하기 성공.
+ *         description: 게시글 수정하기 성공.
  *         example:
- *           message : "Sucessfully create post"
+ *           message : "Sucessfully update post"
  *       500:
  *         description: 서버 에러.
  *         example:
