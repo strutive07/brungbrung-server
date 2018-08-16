@@ -38,7 +38,7 @@ var swaggerDefinition = {
         description: 'API Document', // Description (optional)
     },
     host: '13.124.86.54:23002', // Host (optional)
-    basePath: '/apidoc', // Base path (optional)
+    basePath: '/api/v1g1', // Base path (optional)
     securityDefinitions: {
         jwt: {
             type: 'apiKey',
