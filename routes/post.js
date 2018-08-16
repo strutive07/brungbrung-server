@@ -223,7 +223,7 @@ router.post('/search/:sub_string', (req, res) => {
  * @swagger
  * /post/search/{sub_string}:
  *   post:
- *     summary: 행사 검색하기.
+ *     summary: 게시글 검색하기.
  *     tags: [Post]
  *     parameters:
  *     - name: sub_string
@@ -252,7 +252,7 @@ router.post('/search/:sub_string', (req, res) => {
  * @swagger
  * /post/search/{sub_string}:
  *   post:
- *     summary: 행사 검색하기.
+ *     summary: 게시글 검색하기.
  *     tags: [Post]
  *     parameters:
  *     - name: sub_string
@@ -316,7 +316,7 @@ router.get('/get_all_post/:room_ObjId/', (req, res) => {
  * @swagger
  * /post/get_all_post/{room_ObjId}:
  *   get:
- *     summary: 행사 게시글 가져오기.
+ *     summary: 해당 행사 모든 게시글 가져오기.
  *     tags: [Post]
  *     parameters:
  *     - name: room_ObjId
@@ -388,7 +388,7 @@ router.get('/get_all_post/:room_ObjId/', (req, res) => {
  * @swagger
  * /post/get_post/{room_ObjId}/{post_ObjId}:
  *   get:
- *     summary: 행사 정보 가져오기.
+ *     summary: 게시글 정보 하나 가져오기.
  *     tags: [Post]
  *     parameters:
  *     - name: room_ObjId
@@ -432,7 +432,7 @@ router.post('/search/:sub_string', (req, res) => {
  * @swagger
  * /post/search/{sub_string}:
  *   post:
- *     summary: 행사 검색하기.
+ *     summary: 게시글 검색하기.
  *     tags: [Post]
  *     parameters:
  *     - name: sub_string
@@ -477,7 +477,7 @@ router.post('/delete/:id', (req, res) => {
  * @swagger
  * /post/delete/{id}:
  *   post:
- *     summary: 행사 검색하기.
+ *     summary: 게시글 지우기.
  *     tags: [Post]
  *     parameters:
  *     - name: id
