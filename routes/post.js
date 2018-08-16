@@ -386,7 +386,7 @@ router.get('/get_all_post/:room_ObjId/', (req, res) => {
 
 /**
  * @swagger
- * /room/get_post/{room_ObjId}/{post_ObjId}:
+ * /post/get_post/{room_ObjId}/{post_ObjId}:
  *   get:
  *     summary: 행사 정보 가져오기.
  *     tags: [Post]
