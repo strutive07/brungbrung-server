@@ -116,7 +116,7 @@ exports.get_all_post = (room_ObjId) =>
 exports.search = sub_string =>
     new Promise((resolve, reject) => {
         post_model.find({$or :[
-               {user:sub_string},
+               {user_name:sub_string},
                {title:{$regex:sub_string}},
                {context:{$regex:sub_string}}
                 ]})
