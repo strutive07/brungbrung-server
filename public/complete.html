@@ -8,12 +8,9 @@
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <style>
-        @font-face {
-          font-family: morris9;
-          src: url(./fonts/morris9.ttf) format('truetype');
-        }
+
         body {
-          font-family: morris9;
+
           color:white;
           overflow-x: hidden;
           background: url(login.png) no-repeat center center fixed;
@@ -67,19 +64,45 @@
 <body>
     <div class="row">
           <div class="col-md-12"><img class="img-responsive" src="title.png" style="max-height:280px;" alt=""></div>
-        <div class="col-md-offset-4 col-md-4" style="    right: 0px;    left: 0px;">
+        <div class="col-md-offset-4 col-md-4"  style="margin-left: 17%; width: 66%; top : 80%;   right: 0px;    left: 0px;">
                 <div class="form-login">
-                <h1 style="text-align: center">퀘스트 완료!</h1>
+                <h1 style="text-align: center">API test</h1>
                 <div class="wrapper">
                 <span class="group-btn">
-                    <a id="login_button" class="btn btn-primary btn-md">홈으로<i class="fa fa-sign-in"></i></a>
+                    <a id="login_button" class="btn btn-primary btn-md">join button<i class="fa fa-sign-in"></i></a>
                     <a id="leave_button" class="btn btn-primary btn-md">leave_button<i class="fa fa-sign-in"></i></a>
                     <a id="message_button" class="btn btn-primary btn-md">message_button<i class="fa fa-sign-in"></i></a>
                 </span>
                 </div>
                 </div>
-
             </div>
+        <div class="col-md-offset-4 col-md-4" style=" margin-left: 17%; width: 66%; top : 10% ;right: 0px;    left: 0px;">
+            <div class="form-login">
+                <h1 style="text-align: center">api description</h1>
+                <div class="wrapper">
+                <span class="group-btn">
+                    how to Join? -> code 131 줄 보기
+                    <br/><br/>
+                    init_data // 처음 Join 시 이 JSON data 를 받게됨.<br/>
+                    { <br/>
+                        messages:JSON Array, // 밑에 message JSON 참조<br/>
+                        room_id:String,      // 행사 ObjId. 5b6e898a715e837293dfd7fd 이런식<br/>
+                        users:String Array   // User ID 배열<br/>
+                    }<br/>
+<br/><br/>
+                    message //주고 받고 둘다 이 형식임.<br/>
+                    {<br/>
+                        author : String,     // User 의 Name<br/>
+                        auth_id : String     // User 의 id<br/>
+                        created_at : String, // 쓴 날짜<br/>
+                        message: String      // message<br/>
+                    }<br/>
+<br/>
+                </span>
+                </div>
+            </div>
+        </div>
+    </div>
     </div>
 </body>
 <script type="text/javascript">

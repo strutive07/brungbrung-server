@@ -90,6 +90,7 @@ module.exports.sockets = function(io) {
             console.log(id, room_object_id);
             var message_json = {
                 author : name,
+                auth_id : id,
                 message : message,
                 created_at : new Date()
             };
