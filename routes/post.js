@@ -13,6 +13,7 @@ const profile = require('../functions/profile');
 const quest_complete_flow = require('../functions/quest_complete_flow');
 const quest_info = require('../functions/quest_info');
 const password = require('../functions/password');
+const post_functions = require('../functions/post_api');
 const db = require('../util/db');
 const config = require('../config/config');
 
@@ -21,16 +22,16 @@ const config = require('../config/config');
 
 
 router.post('/create', (req, res) => {
-        var quest_name = req.body.quest_name;
-        var request_person_id = req.body.request_person_id;
+        var room_id = req.body.room_id;
+        var user_auth_id = req.body.user_auth_id;
+        var user_name = req.body.user_name;
         var title = req.body.title;
         var context = req.body.context;
-        var location = req.body.location;
-        var people_num_max = req.body.people_num_max;
-        var people_num = 0;
+        var images_cnt = req.body.images_cnt;
+        var images_array = req.body.images;
 
             db.connectDB().then(
-                quest_info.create_quest(quest_name, request_person_id, title, context, location, people_num_max, people_num)
+                post_functions.create_post(room_id, user_auth_id, user_name,title,context,images_cnt,images_array)
                     .then(result => {
                         res.status(result.status).json({message: result.message});
                     })
@@ -43,62 +44,153 @@ router.post('/create', (req, res) => {
 
 /**
  * @swagger
- * /room/create:
+ * /post/create:
  *   post:
- *     summary: 행사 추가하기.
- *     tags: [Room]
+ *     summary: 게시글 추가하기.
+ *     tags: [Post]
  *     parameters:
- *     - name: quest_name
+ *     - name: room_id
  *       in: body
  *       description: >-
- *          행사 이름
+ *          행사 Object Id
  *       required: true
  *       default: None
  *       type: string
- *     - name: request_person_id
+ *     - name: user_auth_id
  *       in: body
  *       description: >-
- *          주최자 이름(단체 이름)
+ *          게시글 작성자 id
  *       required: true
  *       default: None
  *       type: string
- *     - name: title
+ *     - name: user_name
  *       in: body
  *       description: >-
- *          행사 주제
+ *          게시글 작성자 name
+ *       required: true
+ *       default: None
+ *       type: string
+ *     - name: user_name
+ *       in: body
+ *       description: >-
+ *          게시글 제목
  *       required: true
  *       default: None
  *       type: string
  *     - name: context
  *       in: body
  *       description: >-
- *          행사 설명
+ *          게시글 내용
  *       required: true
  *       default: None
  *       type: string
- *     - name: location
+ *     - name: images_cnt
  *       in: body
  *       description: >-
- *          행사 장소
- *       required: true
- *       default: None
- *       type: string
- *     - name: people_num_max
- *       in: body
- *       description: >-
- *          행사 최대 인원
+ *          이미지 개수
  *       required: true
  *       default: None
  *       type: integer
+ *     - name: images
+ *       in: body
+ *       description: >-
+ *          업로드된 이미지 urls
+ *       required: true
+ *       default: None
+ *       type: string
  *     responses:
  *       200:
- *         description: 행사 추가하기 성공.
+ *         description: 게시글 추가하기 성공.
  *         example:
- *           message : "Sucessfully register quest"
- *       409:
- *         description: 이미 등록된 행사.
+ *           message : "Sucessfully create post"
+ *       500:
+ *         description: 서버 에러.
  *         example:
- *           message :  "Already Registered"
+ *           message :  "Server Error"
+ *
+ */
+
+router.post('/update', (req, res) => {
+    var room_id = req.body.room_id;
+    var post_ObjId = req.body.post_ObjId;
+    var title = req.body.title;
+    var context = req.body.context;
+    var images_cnt = req.body.images_cnt;
+    var images_array = req.body.images;
+
+    db.connectDB().then(
+        post_functions.update_post(room_id, title,context,images_cnt,images_cnt,images_array)
+            .then(result => {
+                res.status(200).json({message: "success", results: result});
+            })
+            .catch(err => {
+                console.log('err : ' + err);
+                res.status(err.status).json({message: err.message});
+            })
+    );
+});
+
+/**
+ * @swagger
+ * /post/create:
+ *   post:
+ *     summary: 게시글 수정하기.
+ *     tags: [Post]
+ *     parameters:
+ *     - name: room_id
+ *       in: body
+ *       description: >-
+ *          행사 Object Id
+ *       required: true
+ *       default: None
+ *       type: string
+ *     - name: user_auth_id
+ *       in: body
+ *       description: >-
+ *          게시글 작성자 id
+ *       required: true
+ *       default: None
+ *       type: string
+ *     - name: user_name
+ *       in: body
+ *       description: >-
+ *          게시글 작성자 name
+ *       required: true
+ *       default: None
+ *       type: string
+ *     - name: user_name
+ *       in: body
+ *       description: >-
+ *          게시글 제목
+ *       required: true
+ *       default: None
+ *       type: string
+ *     - name: context
+ *       in: body
+ *       description: >-
+ *          게시글 내용
+ *       required: true
+ *       default: None
+ *       type: string
+ *     - name: images_cnt
+ *       in: body
+ *       description: >-
+ *          이미지 개수
+ *       required: true
+ *       default: None
+ *       type: integer
+ *     - name: images
+ *       in: body
+ *       description: >-
+ *          업로드된 이미지 urls
+ *       required: true
+ *       default: None
+ *       type: string
+ *     responses:
+ *       200:
+ *         description: 게시글 추가하기 성공.
+ *         example:
+ *           message : "Sucessfully create post"
  *       500:
  *         description: 서버 에러.
  *         example:
@@ -109,9 +201,8 @@ router.post('/create', (req, res) => {
 
 router.post('/search/:sub_string', (req, res) => {
     var sub_string = urlencode.decode(req.params.sub_string);
-    console.log(sub_string);
     db.connectDB().then(
-        quest_info.search(sub_string)
+        post_functions.search(sub_string)
             .then(results=>
                 res.status(200).json({message: "success", results:results})
             ).catch(err => {
@@ -122,10 +213,10 @@ router.post('/search/:sub_string', (req, res) => {
 
 /**
  * @swagger
- * /room/search/{sub_string}:
+ * /post/search/{sub_string}:
  *   post:
  *     summary: 행사 검색하기.
- *     tags: [Room]
+ *     tags: [Post]
  *     parameters:
  *     - name: sub_string
  *       in: path
@@ -138,7 +229,7 @@ router.post('/search/:sub_string', (req, res) => {
  *       200:
  *         description: 검색 성공. 검색 성공이 무조건 아이템이 존재함을 설명하지는 않음.
  *         example:
- *           message : "Sucessfully register quest"
+ *           message : "success"
  *           results: "results As JSON"
  *       500:
  *         description: 서버 에러.
@@ -148,73 +239,27 @@ router.post('/search/:sub_string', (req, res) => {
  */
 
 
-router.post('/enter/:id/:objId', (req, res) => {
-    if (checkToken(req)) {
-        const id = req.params.id;
-        const objId = req.params.objId;
-        if(id && objId){
-            // db.connectDB().then(
-            //     quest_info.enter_quest(id, objId)
-            //         .then(user =>{
-            //
-            //         }).catch(err => {
-            //             console.log('err : ' + err);
-            //             res.status(err.status).json({message: err.message});
-            //         }));
-            db.connectDB().then(
-                quest_info.append_user_in_quest(id, objId)
-                    .then(function(room) {
-                        quest_info.enter_quest(id, room)
-                            .then(user => {
-                                res.status(200).json({message: "success", results:user})
-                            });
-                    }).catch(err => {
-                    console.log('err : ' + err);
-                    res.status(err.status).json({message: err.message});
-                })
-            );
-
-        }else{
-            res.status(401).json({message: 'Invalid Token! '});
-        }
-
-    } else {
-        res.status(401).json({message: 'Invalid Token! '});
-    }
-});
-
-
 
 /**
  * @swagger
- * /room/enter/{id}/{objId}:
+ * /post/search/{sub_string}:
  *   post:
- *     summary: 행사 참여하기.
- *     tags: [Room]
+ *     summary: 행사 검색하기.
+ *     tags: [Post]
  *     parameters:
- *     - name: id
+ *     - name: sub_string
  *       in: path
  *       description: >-
- *          참여할 유저
- *       required: true
- *       default: None
- *       type: string
- *     - name: objId
- *       in: path
- *       description: >-
- *          참여할 행사의 ObjId 의 String
+ *          검색할 부분 문자열
  *       required: true
  *       default: None
  *       type: string
  *     responses:
  *       200:
- *         description: 참여 성공.
+ *         description: 검색 성공. 검색 성공이 무조건 아이템이 존재함을 설명하지는 않음.
  *         example:
  *           message : "success"
- *       401:
- *         description: 토큰과 유저 일치 하지 않음.
- *         example:
- *           message :  "Invalid Token! "
+ *           results: "results As JSON"
  *       500:
  *         description: 서버 에러.
  *         example:
@@ -222,11 +267,16 @@ router.post('/enter/:id/:objId', (req, res) => {
  *
  */
 
-router.get('/get_room/:objId', (req, res) => {
-    const objId = req.params.objId;
-    if(objId){
+
+
+
+router.get('/get_post/:room_ObjId/:post_ObjId', (req, res) => {
+    const objId = req.params.room_ObjId;
+    const post_ObjId = req.params.post_ObjId;
+
+    if(objId && post_ObjId){
         db.connectDB().then(
-            quest_info.get_one_quest(objId)
+            post_functions.get_one_post(objId, post_ObjId)
                 .then(results =>{
                     res.status(200).json(results)
                 }).catch(err => {
@@ -238,62 +288,41 @@ router.get('/get_room/:objId', (req, res) => {
     }
 });
 
-/**
- * @swagger
- * tags:
- *   name: RoomInfo
- *   description: return RoomInfo
- * definitions:
- *   RoomInfo:
- *     type: object
- *     required:
- *       - content
- *     properties:
- *       _id:
- *         type: string
- *         description: room Object Id
- *       quest_name:
- *         type: string
- *         description: 행사 이름
- *       request_person_id:
- *          type: string
- *          description: 주최자
- *       title:
- *          type: string
- *          description: 행사 주제, 이름
- *       context:
- *          type: string
- *          description: 행사 정보
- *       location:
- *          type: string
- *          description: 행사 위치
- *       people_num_max:
- *          type: Integer
- *          description: 최대 인원
- *       people_num:
- *          type: Integer
- *          description: 현재 인
- */
+router.get('/get_all_post/:room_ObjId/', (req, res) => {
+    const objId = req.params.room_ObjId;
 
+    if(objId && post_ObjId){
+        db.connectDB().then(
+            post_functions.get_all_post(objId)
+                .then(results =>{
+                    res.status(200).json(results)
+                }).catch(err => {
+                console.log('err : ' + err);
+                res.status(err.status).json({message: err.message});
+            }));
+    }else{
+        res.status(401).json({message: 'Invalid Token! '});
+    }
+});
 /**
  * @swagger
- * /room/get_room/{objId}:
+ * /room/get_all_post/{room_ObjId}:
  *   get:
- *     summary: 행사 정보 가져오기.
- *     tags: [Room]
+ *     summary: 행사 게시글 가져오기.
+ *     tags: [Post]
  *     parameters:
- *     - name: objId
+ *     - name: room_ObjId
  *       in: path
  *       description: >-
- *          정보를 가져올 행사의 ObjId 의 String
+ *          게시글 정보를 가져올 행사의 ObjId 의 String
  *       required: true
  *       default: None
  *       type: string
  *     responses:
  *       200:
- *         description: 참여 성공.
+ *         description: 게시글 정보. Array 형태로 나옴.
  *         schema:
- *           $ref: '#/definitions/RoomInfo'
+ *           $ref: '#/definitions/PostInfo'
  *       500:
  *         description: 서버 에러.
  *         example:
@@ -301,49 +330,192 @@ router.get('/get_room/:objId', (req, res) => {
  *
  */
 
-    // router.post('/push/:id/:older_id/:quest_id', (req, res) => {
-    //     if (checkToken(req)) {
-    //         var junior_json;
-    //         db.connectDB().then(profile.GetProfile(req.params.id)
-    //             .then(result =>{
-    //                 junior_json = {name : result.name, phone_number : result.phone_number, difficulty : (req.params.quest_id)%10, quest_id : req.params.quest_id ,id : req.params.id};
-    //                 return elder_user_quest_accept_list.push_one_quest_list_in_progress(req.params.older_id, junior_json)
-    //             })
-    //             .then( result =>
-    //                 res.status(result.status).json({message: result.message, result : result.elder_user_accept_list})
-    //             )
-    //             .catch(err => {
-    //                 res.status(err.status).json({message: err.message});
-    //             })
-    //         );
-    //     } else {
-    //         res.status(401).json({message: 'Invalid Token! '});
-    //     }
-    // });
+/**
+ * @swagger
+ * tags:
+ *   name: PostInfo
+ *   description: return PostInfo
+ * definitions:
+ *   RoomInfo:
+ *     type: object
+ *     required:
+ *       - content
+ *     properties:
+ *       _id:
+ *         type: ObjectId
+ *         description: post Object Id
+ *       room_id:
+ *         type: string
+ *         description: 행사 Object Id
+ *       user_auth_id:
+ *          type: string
+ *          description: 게시글 생성자 id
+ *       user_name:
+ *          type: string
+ *          description: 게시글 생성자 name
+ *       title:
+ *          type: string
+ *          description: 게시글 제목
+ *       context:
+ *          type: string
+ *          description: 게시글 정보
+ *       created_at:
+ *          type: string
+ *          description: 게시글 생성 날짜 및 시간
+ *       report_cnt:
+ *          type: Integer
+ *          description: 신고 받은 횟수
+ *       images_cnt:
+ *          type: Integer
+ *          description: 이미지 개수
+ *       images:
+ *          type: Array
+ *          description: 이미지 url 목록들.
+ *       comments:
+ *          type: Array
+ *          description: 댓글
+ */
 
-    // router.post('/delete/:id/:index', (req, res) => {
-    //     if (checkToken(req)) {
-    //         db.connectDB().then(elder_user_quest_accept_list.delete_one_quest_list_by_index(req.params.id, req.params.index)
-    //             .then( result =>
-    //                 res.status(result.status).json({message: result.message, result : result.elder_user_accept_list})
-    //             )
-    //             .catch(err => {
-    //                 res.status(err.status).json({message: err.message});
-    //             })
-    //         );
-    //     } else {
-    //         res.status(401).json({message: 'Invalid Token! '});
-    //     }
-    // });
+/**
+ * @swagger
+ * /room/get_post/{room_ObjId}/{post_ObjId}:
+ *   get:
+ *     summary: 행사 정보 가져오기.
+ *     tags: [Post]
+ *     parameters:
+ *     - name: room_ObjId
+ *       in: path
+ *       description: >-
+ *          게시글 정보를 가져올 행사의 ObjId 의 String
+ *       required: true
+ *       default: None
+ *       type: string
+ *     - name: post_ObjId
+ *       in: path
+ *       description: >-
+ *          게시글 정보를 가져올 게시글의 ObjId 의 String
+ *       required: true
+ *       default: None
+ *       type: string
+ *     responses:
+ *       200:
+ *         description: 참여 성공.
+ *         schema:
+ *           $ref: '#/definitions/PostInfo'
+ *       500:
+ *         description: 서버 에러.
+ *         example:
+ *           message :  "Internal Server Error !"
+ *
+ */
+router.post('/search/:sub_string', (req, res) => {
+    var sub_string = urlencode.decode(req.params.sub_string);
+    db.connectDB().then(
+        post_functions.search(sub_string)
+            .then(results=>
+                res.status(200).json({message: "success", results:results})
+            ).catch(err => {
+            console.log('err : ' + err);
+            res.status(err.status).json({message: err.message});
+        }));
+});
 
+/**
+ * @swagger
+ * /post/search/{sub_string}:
+ *   post:
+ *     summary: 행사 검색하기.
+ *     tags: [Post]
+ *     parameters:
+ *     - name: sub_string
+ *       in: path
+ *       description: >-
+ *          검색할 부분 문자열
+ *       required: true
+ *       default: None
+ *       type: string
+ *     responses:
+ *       200:
+ *         description: 검색 성공. 검색 성공이 무조건 아이템이 존재함을 설명하지는 않음.
+ *         example:
+ *           message : "success"
+ *           results: "results As JSON"
+ *       500:
+ *         description: 서버 에러.
+ *         example:
+ *           message :  "Internal Server Error !"
+ *
+ */
 
+router.post('/delete/:id', (req, res) => {
+    const objId = req.body.room_ObjId;
+    const post_ObjId = req.body.post_ObjId;
 
+    if(objId && post_ObjId && checkToken(req)){
+        db.connectDB().then(
+            post_functions.delete_post(objId, post_ObjId)
+                .then(result =>{
+                    res.status(result.status).json({message : results.message})
+                }).catch(err => {
+                console.log('err : ' + err);
+                res.status(err.status).json({message: err.message});
+            }));
+    }else{
+        res.status(401).json({message: 'Invalid Token! '});
+    }
+});
 
-
+/**
+ * @swagger
+ * /post/delete/{id}:
+ *   post:
+ *     summary: 행사 검색하기.
+ *     tags: [Post]
+ *     parameters:
+ *     - name: id
+ *       in: path
+ *       description: >-
+ *          user id
+ *       required: true
+ *       default: None
+ *       type: string
+ *     - name: room_ObjId
+ *       in: body
+ *       description: >-
+ *          행사 Object Id
+ *       required: true
+ *       default: None
+ *       type: string
+ *     - name: post_ObjId
+ *       in: body
+ *       description: >-
+ *          게시글 Object Id
+ *       required: true
+ *       default: None
+ *       type: string
+ *     responses:
+ *       204:
+ *         description: 성공적으로 삭제.
+ *         example:
+ *           message : "Sucessfully delete post"
+ *           results: "results As JSON"
+ *       401:
+ *         description: 토큰과 유저 일치 하지 않음.
+ *         example:
+ *           message :  "Invalid Token! "
+ *       404:
+ *         description: 행사와 게시글 정보에 해당하는 게시글이 존재하지 않음.
+ *         example:
+ *           message :  "Not Found that post"
+ *       500:
+ *         description: 서버 에러.
+ *         example:
+ *           message :  "Internal Server Error !"
+ *
+ */
 
 
     function checkToken(req){
-        return true;
         const token = req.headers['x-access-token'];
         if(token){
             try{

@@ -20,16 +20,19 @@ const db = require('mongodb');
 const post_model = require('../models/post');
 var mongoose = require('mongoose');
 
-exports.create_post = (room_id, user_auth_id, title, context) =>
+exports.create_post = (room_id, user_auth_id,user_name, title, context, image_number, image_array) =>
     new Promise(((resolve, reject) => {
         const new_post = new post_model({
             room_id : room_id,
-            user : user_auth_id,
+            user_auth_id : user_auth_id,
+            user_name : user_name,
             title: title,
             context : context,
             created_at : new Date(),
             report_cnt : 0,
-            comments : []
+            comments : [],
+            image_number : image_number,
+            images : image_array
         });
         new_post.save().then(() => resolve({
             status : 200,
@@ -41,8 +44,24 @@ exports.create_post = (room_id, user_auth_id, title, context) =>
                 reject({ status: 500, message: 'Server Error' });
             }
         });
-
     }));
+
+exports.delete_post = (room_ObjId, post_ObjId) =>
+    new Promise((resolve, reject) => {
+        post_model.remove({$and:[
+                {_id : mongoose.Types.ObjectId(post_ObjId)},
+                {room_id : room_ObjId}
+            ]})
+            .then(results => {
+                if(!results)
+                    reject({ status: 404, message: 'Not Found that post'});
+                else
+                    resolve({status : 204, message : 'Sucessfully delete post'});
+            })
+    });
+
+
+
 
 exports.get_one_post = (room_ObjId, post_ObjId) =>
     new Promise((resolve, reject) => {
@@ -54,6 +73,28 @@ exports.get_one_post = (room_ObjId, post_ObjId) =>
                     reject({ status: 400, message: '그런 게시글이 존재하지 않습니다.' })
                 }
             var post = results[0];
+            return post;
+        }).then(room => resolve(room))
+            .catch(err => {
+                console.log("err : " + err);
+                reject({ status: 501, message: 'Internal Server Error !' })
+            })});
+
+exports.update_post = (room_ObjId, post_ObjId, title, context, image_number,image_array) =>
+    new Promise((resolve, reject) => {
+        post_model.find({$and:[
+                {_id : mongoose.Types.ObjectId(post_ObjId)},
+                {room_id : room_ObjId}
+            ]}).then(results => {
+            if(results.length === 0){
+                reject({ status: 400, message: '그런 게시글이 존재하지 않습니다.' })
+            }
+            var post = results[0];
+            post.title = title;
+            post.context = context;
+            post.images_cnt = image_number;
+            post.images = image_array;
+            post.save();
             return post;
         }).then(room => resolve(room))
             .catch(err => {

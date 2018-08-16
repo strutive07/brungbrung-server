@@ -26,6 +26,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 var login_register = require('./routes/login_register');
 var room = require('./routes/quest');
+var post_apis = require('./routes/post');
 
 const swaggerJSDoc = require('swagger-jsdoc')
 // Swagger definition
@@ -58,7 +59,8 @@ var options = {
     // Path to the API docs
     apis: [
         './routes/login_register.js',
-        './routes/quest.js'
+        './routes/quest.js',
+        './routes/post.js'
     ],
 }
 
@@ -72,6 +74,7 @@ app.use('/apidoc', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use('/api/v1g1/user', login_register);
 app.use('/api/v1g1/room', room);
+app.use('/api/v1g1/post', post_apis);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
