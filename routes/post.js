@@ -299,7 +299,7 @@ router.get('/get_post/:room_ObjId/:post_ObjId', (req, res) => {
 router.get('/get_all_post/:room_ObjId/', (req, res) => {
     const objId = req.params.room_ObjId;
 
-    if(objId && post_ObjId){
+    if(objId){
         db.connectDB().then(
             post_functions.get_all_post(objId)
                 .then(results =>{
