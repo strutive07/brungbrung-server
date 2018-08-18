@@ -31,9 +31,10 @@ exports.create_quest = (quest_name, request_person_id, title, context, location,
             people_num : people_num,
             users : []
         });
-        new_quest_info.save().then(() => resolve({
+        new_quest_info.save().then((data) => resolve({
             status : 200,
-            message : 'Sucessfully register quest'
+            message : 'Sucessfully register quest',
+            data : data
         })).catch(err =>{
             if(err.code == 11000){
                 reject({ status: 409, message: 'Already Registered'});

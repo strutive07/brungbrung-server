@@ -16,22 +16,44 @@ const password = require('../functions/password');
 const post_functions = require('../functions/post_api');
 const db = require('../util/db');
 const config = require('../config/config');
+const multer = require('multer');
+const crypto = require('crypto');
+const fs = require('fs');
+const uniqid = require('uniqid');
+router.get('/', (req, res) => res.end('I choose you! (Server)\nMade by ssu.software.17.Wonjun Jang\nquest routes'));
+
+storage = multer.diskStorage({
+    destination:(req, file, cb)=>{
+
+        dirPath = __basedir + '/uploads'
+        console.log(dirPath);
+
+        cb(null, dirPath);
+    },
+    filename: (req, file, cb)=>{
+        cb(null, uniqid() +file.originalname);
+    }
+})
 
 
-    router.get('/', (req, res) => res.end('I choose you! (Server)\nMade by ssu.software.17.Wonjun Jang\nquest routes'));
+router.post('/create', multer({storage:storage}).array('images', 20), (req, res) => {
+        console.log(req.body.data);
+        data = JSON.parse(req.body.data);
+        var room_id = data.room_id;
+        var user_auth_id = data.user_auth_id;
+        var user_name = data.user_name;
+        var title = data.title;
+        var context = data.context;
+        var images_cnt = data.images_cnt;
+        var images_list = [];
+        console.log('[data] ',room_id, user_auth_id);
+        req.files.forEach((element) => {
+            images_list.push(element.filename);
+        });
 
-
-router.post('/create', (req, res) => {
-        var room_id = req.body.room_id;
-        var user_auth_id = req.body.user_auth_id;
-        var user_name = req.body.user_name;
-        var title = req.body.title;
-        var context = req.body.context;
-        var images_cnt = req.body.images_cnt;
-        var images_array = req.body.images;
-
+        console.log(req.files);
             db.connectDB().then(
-                post_functions.create_post(room_id, user_auth_id, user_name,title,context,images_cnt,images_array)
+                post_functions.create_post(room_id, user_auth_id, user_name,title,context,images_cnt,images_list)
                     .then(result => {
                         res.status(result.status).json({message: result.message});
                     })
@@ -48,56 +70,23 @@ router.post('/create', (req, res) => {
  *   post:
  *     summary: 게시글 추가하기.
  *     tags: [Post]
+ *     consumes:
+ *       - multipart/form-data
  *     parameters:
- *     - name: room_id
+ *     - name: images
+ *       in: formData
+ *       description: >-
+ *          이미지들
+ *       required: false
+ *       default: None
+ *       type: file
+ *     - name: data
  *       in: body
  *       description: >-
  *          행사 Object Id
  *       required: true
  *       default: None
- *       type: string
- *     - name: user_auth_id
- *       in: body
- *       description: >-
- *          게시글 작성자 id
- *       required: true
- *       default: None
- *       type: string
- *     - name: user_name
- *       in: body
- *       description: >-
- *          게시글 작성자 name
- *       required: true
- *       default: None
- *       type: string
- *     - name: title
- *       in: body
- *       description: >-
- *          게시글 제목
- *       required: true
- *       default: None
- *       type: string
- *     - name: context
- *       in: body
- *       description: >-
- *          게시글 내용
- *       required: true
- *       default: None
- *       type: string
- *     - name: images_cnt
- *       in: body
- *       description: >-
- *          이미지 개수
- *       required: true
- *       default: None
- *       type: integer
- *     - name: images
- *       in: body
- *       description: >-
- *          업로드된 이미지 urls
- *       required: true
- *       default: None
- *       type: string
+ *       type: Object
  *       example:
  *	        room_id : "5b6e898a715e837293dfd7fd"
  *	        user_auth_id : "dev1234"
@@ -105,7 +94,6 @@ router.post('/create', (req, res) => {
  *	        title : "hi"
  *	        context : "context hoho"
  *	        images_cnt : 0
- *	        images : []
  *     responses:
  *       200:
  *         description: 게시글 추가하기 성공.

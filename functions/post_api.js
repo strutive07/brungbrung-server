@@ -34,7 +34,7 @@ exports.create_post = (room_id, user_auth_id,user_name, title, context, image_nu
             image_number : image_number,
             images : image_array
         });
-        new_post.save().then(() => resolve({
+        new_post.save().then((data) => resolve({
             status : 200,
             message : 'Sucessfully create post'
         })).catch(err =>{

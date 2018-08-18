@@ -14,6 +14,7 @@ const router = express.Router();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+global.__basedir = __dirname;
 
 // uncomment after placing your favicon in /public
 // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -75,6 +76,7 @@ app.use('/apidoc', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api/v1g1/user', login_register);
 app.use('/api/v1g1/room', room);
 app.use('/api/v1g1/post', post_apis);
+app.use('/images', express.static('uploads'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

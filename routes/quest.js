@@ -15,9 +15,11 @@ const quest_info = require('../functions/quest_info');
 const password = require('../functions/password');
 const db = require('../util/db');
 const config = require('../config/config');
+const fs = require('fs');
 
 
-    router.get('/', (req, res) => res.end('I choose you! (Server)\nMade by ssu.software.17.Wonjun Jang\nquest routes'));
+
+router.get('/', (req, res) => res.end('I choose you! (Server)\nMade by ssu.software.17.Wonjun Jang\nquest routes'));
 
 
 router.post('/create', (req, res) => {
@@ -29,10 +31,16 @@ router.post('/create', (req, res) => {
         var people_num_max = req.body.people_num_max;
         var people_num = 0;
 
+
             db.connectDB().then(
                 quest_info.create_quest(quest_name, request_person_id, title, context, location, people_num_max, people_num)
                     .then(result => {
-                        res.status(result.status).json({message: result.message});
+                        // console.log(result);
+
+                        dirPath = __basedir + '/uploads/' + result.data._id;
+                        console.log(dirPath)
+                        fs.mkdirSync(dirPath);
+                        res.status(result.status).json({message: result.message, data : result.data});
                     })
                     .catch(err => {
                         console.log('err : ' + err);
