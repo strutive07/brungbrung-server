@@ -94,6 +94,7 @@ router.post('/create', multer({storage:storage}).array('images', 20), (req, res)
  *	        title : "hi"
  *	        context : "context hoho"
  *	        images_cnt : 0
+ *
  *     responses:
  *       200:
  *         description: 게시글 추가하기 성공.
