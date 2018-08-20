@@ -5,7 +5,7 @@ const user = require('../models/user');
 
 const bcrypt = require('bcryptjs');
 
-exports.RegisterUser = (name, id, password) =>
+exports.RegisterUser = (name, id, password, birth, address) =>
     new Promise(((resolve, reject) => {
         const salt = bcrypt.genSaltSync(10);
         const hashed_password = bcrypt.hashSync(password, salt);
@@ -26,6 +26,8 @@ exports.RegisterUser = (name, id, password) =>
                 created_at : new Date(),
                 temp_password : undefined,
                 temp_password_time : undefined,
+                birth : birth,
+                address : address,
                 room_string : []
             });
             return newUser;

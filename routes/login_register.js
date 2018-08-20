@@ -111,6 +111,8 @@ router.post('/register', (req, res) => {
         const name = req.body.name;
         var id = req.body.id;
         const password = req.body.password;
+        const birth = req.body.birth;
+        const address = req.body.address;
 
         console.log('name : ' + name);
         console.log('id : ' + id);
@@ -120,7 +122,7 @@ router.post('/register', (req, res) => {
             res.status(400).json({message: 'Invalid Request !'});
         } else {
 
-            db.connectDB().then(register.RegisterUser(name, id, password)
+            db.connectDB().then(register.RegisterUser(name, id, password, birth, address)
                 .then(result => {
                     console.log('name->' + name);
                     console.log('email->' + id);
@@ -152,6 +154,20 @@ router.post('/register', (req, res) => {
  *          name : "장원준"
  *          id: "dev1234"
  *          password: "1234"
+ *     - name: birth
+ *       in: body
+ *       description: >-
+ *          회원가입에 필요한 생일 날짜
+ *       required: true
+ *       default: None 없음!
+ *       type: string
+ *     - name: address
+ *       in: body
+ *       description: >-
+ *          회원가입에 필요한 주소
+ *       required: true
+ *       default: None 없음!
+ *       type: string
  *     - name: id
  *       in: body
  *       description: >-

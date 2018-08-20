@@ -8,7 +8,8 @@ var userSchema = new Schema({
     created_at : String,
     temp_password : String,
     temp_password_time : String,
-    room_string : Array // 홈페이지 토큰 값.
+    room_string : Array, // 홈페이지 토큰 값.
+    birth : String
 }, { usePushEach: true });
 
 
