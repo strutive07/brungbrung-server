@@ -302,6 +302,50 @@ router.get('/get_room/:objId', (req, res) => {
  *         description: 참여 성공.
  *         schema:
  *           $ref: '#/definitions/RoomInfo'
+ *       401:
+ *         description: ObjId 없음 또는 오류.
+ *         example:
+ *           message :  "Invalid Token! "
+ *       500:
+ *         description: 서버 에러.
+ *         example:
+ *           message :  "Internal Server Error !"
+ *
+ */
+
+router.get('/get_room_all', (req, res) => {
+    if(objId){
+        db.connectDB().then(
+            quest_info.get_all_quest()
+                .then(results =>{
+                    res.status(200).json(results)
+                }).catch(err => {
+                console.log('err : ' + err);
+                res.status(err.status).json({message: err.message});
+            }));
+    }else{
+        res.status(401).json({message: 'Invalid Token! '});
+    }
+});
+/**
+ * @swagger
+ * /room/get_room_all/:
+ *   get:
+ *     summary: 행사 정보 가져오기.
+ *     tags: [Room]
+ *     parameters:
+ *     - name: objId
+ *       in: path
+ *       description: >-
+ *          정보를 가져올 행사의 ObjId 의 String
+ *       required: true
+ *       default: None
+ *       type: string
+ *     responses:
+ *       200:
+ *         description: 참여 성공. 아래 데이터를 아이템으로 가지는 배열 리턴.
+ *         schema:
+ *           $ref: '#/definitions/RoomInfo'
  *       500:
  *         description: 서버 에러.
  *         example:
