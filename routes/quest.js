@@ -314,7 +314,7 @@ router.get('/get_room/:objId', (req, res) => {
  */
 
 router.get('/get_room_all', (req, res) => {
-    if(objId){
+
         db.connectDB().then(
             quest_info.get_all_quest()
                 .then(results =>{
@@ -323,9 +323,7 @@ router.get('/get_room_all', (req, res) => {
                 console.log('err : ' + err);
                 res.status(err.status).json({message: err.message});
             }));
-    }else{
-        res.status(401).json({message: 'Invalid Token! '});
-    }
+    
 });
 /**
  * @swagger
