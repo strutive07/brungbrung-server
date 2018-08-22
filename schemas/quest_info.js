@@ -9,7 +9,8 @@ const quest_info = mongoose.Schema({
     location : String,
     people_num_max : Number,
     people_num : Number,
-    users : Array
+    users : Array,
+    type:String
 }, { usePushEach: true });
 
 module.exports = quest_info;

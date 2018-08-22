@@ -30,10 +30,11 @@ router.post('/create', (req, res) => {
         var location = req.body.location;
         var people_num_max = req.body.people_num_max;
         var people_num = 0;
+        var room_type = req.body.type;
 
 
             db.connectDB().then(
-                quest_info.create_quest(quest_name, request_person_id, title, context, location, people_num_max, people_num)
+                quest_info.create_quest(quest_name, request_person_id, title, context, location, people_num_max, people_num,room_type)
                     .then(result => {
                         // console.log(result);
 
@@ -115,8 +116,8 @@ router.post('/create', (req, res) => {
  */
 
 
-router.post('/search/:sub_string', (req, res) => {
-    var sub_string = urlencode.decode(req.params.sub_string);
+router.post('/search', (req, res) => {
+    var sub_string = req.body.sub_string;
     console.log(sub_string);
     db.connectDB().then(
         quest_info.search(sub_string)
@@ -130,13 +131,13 @@ router.post('/search/:sub_string', (req, res) => {
 
 /**
  * @swagger
- * /room/search/{sub_string}:
+ * /room/search:
  *   post:
  *     summary: 행사 검색하기.
  *     tags: [Room]
  *     parameters:
  *     - name: sub_string
- *       in: path
+ *       in: body
  *       description: >-
  *          검색할 부분 문자열
  *       required: true
@@ -155,6 +156,46 @@ router.post('/search/:sub_string', (req, res) => {
  *
  */
 
+router.post('/search_type', (req, res) => {
+
+    var sub_string = req.body.sub_string;
+    console.log(sub_string);
+    db.connectDB().then(
+        quest_info.search_type(sub_string)
+            .then(results=>
+                res.status(200).json({message: "success", results:results})
+            ).catch(err => {
+            console.log('err : ' + err);
+            res.status(err.status).json({message: err.message});
+        }));
+});
+
+/**
+ * @swagger
+ * /room/search_type:
+ *   post:
+ *     summary: 행사 타입으로  검색하기.
+ *     tags: [Room]
+ *     parameters:
+ *     - name: sub_string
+ *       in: body
+ *       description: >-
+ *          검색할 부분 문자열
+ *       required: true
+ *       default: None
+ *       type: string
+ *     responses:
+ *       200:
+ *         description: 검색 성공. 검색 성공이 무조건 아이템이 존재함을 설명하지는 않음.
+ *         example:
+ *           message : "Sucessfully register quest"
+ *           results: "results As JSON"
+ *       500:
+ *         description: 서버 에러.
+ *         example:
+ *           message :  "Internal Server Error !"
+ *
+ */
 
 router.post('/enter/:id/:objId', (req, res) => {
     if (checkToken(req)) {
@@ -323,7 +364,7 @@ router.get('/get_room_all', (req, res) => {
                 console.log('err : ' + err);
                 res.status(err.status).json({message: err.message});
             }));
-    
+
 });
 /**
  * @swagger

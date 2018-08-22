@@ -19,7 +19,7 @@ const bcrypt = require('bcryptjs');
 const db = require('mongodb');
 var mongoose = require('mongoose');
 
-exports.create_quest = (quest_name, request_person_id, title, context, location, people_num_max, people_num) =>
+exports.create_quest = (quest_name, request_person_id, title, context, location, people_num_max, people_num, room_type) =>
     new Promise(((resolve, reject) => {
         const new_quest_info = new quest_info({
             quest_name : quest_name,
@@ -29,7 +29,8 @@ exports.create_quest = (quest_name, request_person_id, title, context, location,
             location : location,
             people_num_max : people_num_max,
             people_num : people_num,
-            users : []
+            users : [],
+            type : room_type
         });
         new_quest_info.save().then((data) => resolve({
             status : 200,
@@ -104,5 +105,16 @@ exports.search = sub_string =>
            console.log("err : " + err);
            reject({ status: 500, message: 'Internal Server Error !' })
        })
+    });
+
+exports.search_type = sub_string =>
+    new Promise((resolve, reject) => {
+        quest_info.find({type:sub_string})
+            .then(results => {
+                resolve(results);
+            }).catch(err => {
+            console.log("err : " + err);
+            reject({ status: 500, message: 'Internal Server Error !' })
+        })
     });
 
