@@ -16,6 +16,7 @@ const password = require('../functions/password');
 const db = require('../util/db');
 const config = require('../config/config');
 const fs = require('fs');
+const multer = require('multer');
 
 
 
