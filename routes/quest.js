@@ -36,7 +36,7 @@ storage = multer.diskStorage({
 })
 
 router.post('/create', multer({storage:storage}).array('images', 20), (req, res) => {
-    if(checkToken_by_id(req, data.request_person_id) === false){
+    if(checkToken_by_id(req, req.body.data.request_person_id) === false){
         res.status(401).json({message: "Invalid Token!"});
     }
         data = JSON.parse(req.body.data);
