@@ -127,3 +127,25 @@ exports.search = sub_string =>
            reject({ status: 500, message: 'Internal Server Error !' })
        })
     });
+
+exports.add_comment = (room_ObjId, post_ObjId, user_auth_id,user_name, context) =>
+    new Promise((resolve, reject) => {
+        post_model.find({$and:[
+                {_id : mongoose.Types.ObjectId(post_ObjId)},
+                {room_id : room_ObjId}
+            ]}).then(results => {
+                var one_post = results[0];
+                var comment = {
+                    user_auth_id : user_auth_id,
+                    user_name : user_name,
+                    context : context
+                }
+                one_post.comments.push(comment);
+                one_post.save();
+                return one_post;
+        }).then(result => resolve(result))
+            .catch(err => {
+                console.log("err : " + err);
+                reject({ status: 500, message: 'Internal Server Error !' })
+            })
+    })

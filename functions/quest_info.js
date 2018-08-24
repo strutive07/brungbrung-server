@@ -19,7 +19,7 @@ const bcrypt = require('bcryptjs');
 const db = require('mongodb');
 var mongoose = require('mongoose');
 
-exports.create_quest = (quest_name, request_person_id, title, context, location, people_num_max, people_num, room_type) =>
+exports.create_quest = (quest_name, request_person_id, title, context, location, people_num_max, people_num, room_type,image_list) =>
     new Promise(((resolve, reject) => {
         const new_quest_info = new quest_info({
             quest_name : quest_name,
@@ -30,7 +30,8 @@ exports.create_quest = (quest_name, request_person_id, title, context, location,
             people_num_max : people_num_max,
             people_num : people_num,
             users : [],
-            type : room_type
+            type : room_type,
+            images : image_list
         });
         new_quest_info.save().then((data) => resolve({
             status : 200,

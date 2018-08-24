@@ -21,26 +21,41 @@ const fs = require('fs');
 
 router.get('/', (req, res) => res.end('I choose you! (Server)\nMade by ssu.software.17.Wonjun Jang\nquest routes'));
 
+storage = multer.diskStorage({
+    destination:(req, file, cb)=>{
 
-router.post('/create', (req, res) => {
-        var quest_name = req.body.quest_name;
-        var request_person_id = req.body.request_person_id;
-        var title = req.body.title;
-        var context = req.body.context;
-        var location = req.body.location;
-        var people_num_max = req.body.people_num_max;
+        dirPath = __basedir + '/uploads'
+        console.log(dirPath);
+
+        cb(null, dirPath);
+    },
+    filename: (req, file, cb)=>{
+        cb(null, uniqid() +file.originalname);
+    }
+})
+
+router.post('/create', multer({storage:storage}).array('images', 20), (req, res) => {
+    if(checkToken_by_id(req, data.request_person_id) === false){
+        res.status(401).json({message: "Invalid Token!"});
+    }
+        data = JSON.parse(req.body.data);
+        var quest_name = data.quest_name;
+        var request_person_id = data.request_person_id;
+        var title = data.title;
+        var context = data.context;
+        var location = data.location;
+        var people_num_max = data.people_num_max;
         var people_num = 0;
-        var room_type = req.body.type;
-
+        var room_type = data.type;
+        var images_list = [];
+        req.files.forEach((element) => {
+            images_list.push(element.filename);
+        });
 
             db.connectDB().then(
-                quest_info.create_quest(quest_name, request_person_id, title, context, location, people_num_max, people_num,room_type)
+                quest_info.create_quest(quest_name, request_person_id, title, context, location, people_num_max, people_num,room_type, images_list)
                     .then(result => {
                         // console.log(result);
-
-                        dirPath = __basedir + '/uploads/' + result.data._id;
-                        console.log(dirPath)
-                        fs.mkdirSync(dirPath);
                         res.status(result.status).json({message: result.message, data : result.data});
                     })
                     .catch(err => {
@@ -108,6 +123,10 @@ router.post('/create', (req, res) => {
  *         description: 이미 등록된 행사.
  *         example:
  *           message :  "Already Registered"
+ *       401:
+ *         description: 토큰과 유저 일치 하지 않음.
+ *         example:
+ *           message :  "Invalid Token! "
  *       500:
  *         description: 서버 에러.
  *         example:
@@ -433,6 +452,27 @@ router.get('/get_room_all', (req, res) => {
             try{
                 var decoded = jwt.verify(token, config.secret);
                 if(decoded.message === req.params.id){
+                    console.log("hoho");
+                    return true;
+                }else{
+                    console.log("bobo");
+                    return false;
+                }
+
+            }catch(err){
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
+    function checkToken_by_id(req, id){
+        return true;
+        const token = req.headers['x-access-token'];
+        if(token){
+            try{
+                var decoded = jwt.verify(token, config.secret);
+                if(decoded.message === id){
                     console.log("hoho");
                     return true;
                 }else{
