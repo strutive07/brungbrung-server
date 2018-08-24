@@ -10,7 +10,8 @@ const quest_info = mongoose.Schema({
     people_num_max : Number,
     people_num : Number,
     users : Array,
-    type:String
+    type:String,
+    images : Array
 }, { usePushEach: true });
 
 module.exports = quest_info;
