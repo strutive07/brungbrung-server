@@ -54,13 +54,13 @@
                     <table>
                         <tr>
                             <td>아이디</td>
-                            <td><input type="text" name="id" id="id"></td>
+                            <td><input type="text" name="id" id="login_id"></td>
                         </tr>
                         <tr>
                             <td>비밀번호</td>
-                            <td><input type="password" name="password" id="password"></td>
+                            <td><input type="password" name="password" id="login_password"></td>
                         </tr>
-                        <input type="hidden" name="objId" id="objId" value="<%= json._id %>">
+                        <input type="hidden" name="objId" id="login_objId" value="<%= json._id %>">
                     </table>
 
                     <ul class="actions">
@@ -143,6 +143,31 @@
 <script src="/assets/js/breakpoints.min.js"></script>
 <script src="/assets/js/util.js"></script>
 <script src="/assets/js/main.js"></script>
+
+<script>
+    $('body').on('click', '#leave_button', function() {
+        id = $('#login_id').val()
+        password = $('#login_password').val()
+        objId = $('#login_objId').val()
+        $.ajax({
+            url : 'http://ssumon.com:23002/api/v1g1/room/',
+            type : "post",
+            headers : headers,
+            accept: "application/json",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(data) {
+                var id = getCookie('id');
+                var headers = {};
+                headers['x-access-token'] = getCookie('x-access-token');
+                var url = "https://ssumon.com/api/v1g1/quest/" + id + "/" + quest_id;
+                getOneQuestInfo(id, headers, url, quest_id,random, 0);
+            },
+            error: function(jqXHR,textStatus,errorThrown) {
+            }
+        });
+    })
+</script>
 
 </body>
 </html>

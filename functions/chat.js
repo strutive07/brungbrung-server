@@ -75,7 +75,7 @@ module.exports.sockets = function(io) {
                     }
                     result.save();
                     socket.leave(room_object_id);
-                    socket.emit('init_data', result);
+
                 })
             );
 
