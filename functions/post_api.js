@@ -32,7 +32,9 @@ exports.create_post = (room_id, user_auth_id,user_name, title, context, image_nu
             report_cnt : 0,
             comments : [],
             image_number : image_number,
-            images : image_array
+            images : image_array,
+            view_cnt:0,
+            like_cnt:0
         });
         new_post.save().then((data) => resolve({
             status : 200,
