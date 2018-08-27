@@ -265,7 +265,26 @@ router.post('/search/:sub_string', (req, res) => {
  */
 
 
+router.post('/add_comment', (req, res) => {
+    const objId = req.body.room_ObjId;
+    const post_ObjId = req.body.post_ObjId;
+    const user_auth_id = req.body.auth_id;
+    const user_name = req.body.author;
+    const context = req.body.message;
 
+    if(objId && post_ObjId){
+        db.connectDB().then(
+            post_functions.add_comment(objId, post_ObjId,user_auth_id,user_name,context)
+                .then(results =>{
+                    res.status(200).json(results)
+                }).catch(err => {
+                console.log('err : ' + err);
+                res.status(err.status).json({message: err.message});
+            }));
+    }else{
+        res.status(401).json({message: 'Invalid Token! '});
+    }
+});
 
 router.get('/get_post/:room_ObjId/:post_ObjId', (req, res) => {
     const objId = req.params.room_ObjId;

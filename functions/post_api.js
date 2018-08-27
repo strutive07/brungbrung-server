@@ -168,10 +168,12 @@ exports.add_comment = (room_ObjId, post_ObjId, user_auth_id,user_name, context) 
             ]}).then(results => {
                 var one_post = results[0];
                 var comment = {
-                    user_auth_id : user_auth_id,
-                    user_name : user_name,
-                    context : context
+                    auth_id : user_auth_id,
+                    author : user_name,
+                    message : context,
+                    created_at : new Date()
                 }
+                console.log(comment)
                 one_post.comments.push(comment);
                 one_post.save();
                 return one_post;

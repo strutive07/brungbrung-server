@@ -23,7 +23,7 @@
             <ul>
                 <li><a href="#intro">Welcome</a></li>
                 <li><a href="#one">Who we are</a></li>
-                <li><a href="#two">What we do</a></li>
+                <li id="li_two"><a href="#two">What we do</a></li>
                 <li><a href="#three">Get in touch</a></li>
             </ul>
         </nav>
@@ -48,7 +48,7 @@
     <section id="one" class="wrapper style2 spotlights">
         <section>
             <a href="#" class="image"><img src= "<%= "http://ssumon.com:23002/images/" + json.images[0]%>" alt="" data-position="center center"/></a>
-            <div class="content">
+            <div class="content" id="login_container">
                 <div class="inner">
                     <h2>로그인</h2>
                     <table>
@@ -109,8 +109,10 @@
     <!-- Three -->
     <section id="three" class="wrapper style1 fade-up">
         <div class="inner">
-            <h2>행사에 참여 완료!</h2>
-            <p>자세한 정보는 앱에서 확인해주세요</p>
+            <h2 id="fin">행사에 미참여</h2>
+            <p id="fin2">로그인하여 행사에 참여해 주세요!</p>
+            <!--<h2 id="fin">행사에 참여 완료!</h2>-->
+            <!--<p id="fin2">자세한 정보는 앱에서 확인해주세요</p>-->
             <br>
             <br>
             <br>
@@ -150,14 +152,18 @@
         password = $('#login_password').val()
         objId = $('#login_objId').val()
         $.ajax({
-            url : 'http://localhost:23002/api/v1g1/room/enter_web',
-            type : "post",
-            data:{id:id, password:password, objId:objId},
+            url : 'http://localhost:23002/api/v1g1/room/go',
+            type : "POST",
+            data:JSON.stringify({id:id, password:password, objId:objId}),
             accept: "application/json",
-            contentType: "application/json; charset=utf-8",
+            contentType: "application/json",
             dataType: "json",
             success: function(data) {
-                console.log(data)
+                $('#fin').text('행사에 참여 완료!');
+                $('#fin2').text('자세한 정보는 앱에서 확인해주세요');
+                $('#two').hide();
+                $('#li_two').hide();
+                $('#login_container').hide();
             },
             error: function(jqXHR,textStatus,errorThrown) {
             }

@@ -219,13 +219,15 @@ router.post('/search_type', (req, res) => {
  *
  */
 
-router.post('/enter_web', (req, res) => {
+router.post('/go', (req, res) => {
+
     var id = req.body.id;
     var password = req.body.password;
     var objId = req.body.objId;
 
     console.log(id);
     console.log(password);
+
     if (id && password) {
         db.connectDB().then(login.LoginUser(id, password)
             .then(result => {
@@ -252,7 +254,7 @@ router.post('/enter_web', (req, res) => {
     } else {
         res.status(400).json({message: 'Invalid Request !'});
     }
-})
+});
 
 
 
