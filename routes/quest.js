@@ -18,6 +18,8 @@ const config = require('../config/config');
 const fs = require('fs');
 const multer = require('multer');
 const uniqid = require('uniqid');
+require('babel-polyfill');
+var brandedQRCode = require('branded-qr-code');
 
 
 router.get('/', (req, res) => res.end('I choose you! (Server)\nMade by ssu.software.17.Wonjun Jang\nquest routes'));
@@ -323,6 +325,7 @@ router.post('/enter/:id/:objId', (req, res) => {
 
 router.get('/welcome/:objId', (req, res)=>{
     const objId = req.params.objId;
+
     if(objId){
         db.connectDB().then(
             quest_info.get_one_quest(objId)
@@ -337,8 +340,6 @@ router.get('/welcome/:objId', (req, res)=>{
         res.status(401).json({message: 'Invalid Token! '});
     }
 });
-
-
 
 
 router.get('/get_room/:objId', (req, res) => {
@@ -423,6 +424,7 @@ router.get('/get_room/:objId', (req, res) => {
  *           message :  "Internal Server Error !"
  *
  */
+
 
 router.get('/get_room_all', (req, res) => {
 

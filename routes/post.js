@@ -285,6 +285,41 @@ router.get('/get_post/:room_ObjId/:post_ObjId', (req, res) => {
     }
 });
 
+router.get('/add_like/:room_ObjId/:post_ObjId', (req, res) => {
+    const objId = req.params.room_ObjId;
+    const post_ObjId = req.params.post_ObjId;
+
+    if(objId && post_ObjId){
+        db.connectDB().then(
+            post_functions.add_like(objId, post_ObjId)
+                .then(results =>{
+                    res.status(200).json(results)
+                }).catch(err => {
+                console.log('err : ' + err);
+                res.status(err.status).json({message: err.message});
+            }));
+    }else{
+        res.status(401).json({message: 'Invalid Token! '});
+    }
+});
+
+router.get('/get_top_3/:room_ObjId/', (req, res) => {
+    const objId = req.params.room_ObjId;
+
+    if(objId){
+        db.connectDB().then(
+            post_functions.get_top_3(objId)
+                .then(results =>{
+                    res.status(200).json(results)
+                }).catch(err => {
+                console.log('err : ' + err);
+                res.status(err.status).json({message: err.message});
+            }));
+    }else{
+        res.status(401).json({message: 'Invalid Token! '});
+    }
+});
+
 router.get('/get_all_post/:room_ObjId/', (req, res) => {
     const objId = req.params.room_ObjId;
 

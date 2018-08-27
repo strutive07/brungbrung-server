@@ -11,7 +11,9 @@ const post = mongoose.Schema({
     report_cnt : Number,
     comments : Array,
     images_cnt : Number,
-    images : Array
+    images : Array,
+    view_cnt : Number,
+    like_cnt : Number
 }, { usePushEach: true });
 
 module.exports = post;

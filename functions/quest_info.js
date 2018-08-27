@@ -31,7 +31,9 @@ exports.create_quest = (quest_name, request_person_id, title, context, location,
             people_num : people_num,
             users : [],
             type : room_type,
-            images : image_list
+            images : image_list,
+            view_cnt : 0,
+            like_cnt : 0
         });
         new_quest_info.save().then((data) => resolve({
             status : 200,
@@ -87,6 +89,7 @@ exports.get_all_quest = () =>
             reject({ status: 500, message: 'Internal Server Error !' })
         })});
 
+
 exports.get_one_quest = (room_ObjId) =>
     new Promise((resolve, reject) => {
         quest_info.find({_id : mongoose.Types.ObjectId(room_ObjId)}).then(results => {
@@ -97,6 +100,8 @@ exports.get_one_quest = (room_ObjId) =>
                 console.log("err : " + err);
                 reject({ status: 501, message: 'Internal Server Error !' })
             })});
+
+
 exports.search = sub_string =>
     new Promise((resolve, reject) => {
        quest_info.find({$or :[{quest_name:{$regex:sub_string},}, {title:{$regex:sub_string}}, {context:{$regex:sub_string}}, {request_person_id:{$regex:sub_string}}]})

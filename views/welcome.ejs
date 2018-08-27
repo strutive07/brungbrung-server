@@ -64,7 +64,7 @@
                     </table>
 
                     <ul class="actions">
-                        <li><a href="#three" class="button scrolly">완료</a></li>
+                        <li><a href="#three" class="button scrolly" id="login_button_ho">완료</a></li>
                         <li><a href="#two" class="button scrolly">회원가입</a></li>
                     </ul>
                 </div>
@@ -145,23 +145,19 @@
 <script src="/assets/js/main.js"></script>
 
 <script>
-    $('body').on('click', '#leave_button', function() {
+    $('body').on('click', '#login_button_ho', function() {
         id = $('#login_id').val()
         password = $('#login_password').val()
         objId = $('#login_objId').val()
         $.ajax({
-            url : 'http://ssumon.com:23002/api/v1g1/room/',
+            url : 'http://localhost:23002/api/v1g1/room/enter_web',
             type : "post",
-            headers : headers,
+            data:{id:id, password:password, objId:objId},
             accept: "application/json",
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function(data) {
-                var id = getCookie('id');
-                var headers = {};
-                headers['x-access-token'] = getCookie('x-access-token');
-                var url = "https://ssumon.com/api/v1g1/quest/" + id + "/" + quest_id;
-                getOneQuestInfo(id, headers, url, quest_id,random, 0);
+                console.log(data)
             },
             error: function(jqXHR,textStatus,errorThrown) {
             }

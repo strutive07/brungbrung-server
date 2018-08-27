@@ -73,6 +73,26 @@ exports.get_one_post = (room_ObjId, post_ObjId) =>
                     reject({ status: 400, message: '그런 게시글이 존재하지 않습니다.' })
                 }
             var post = results[0];
+                post.view_cnt++;
+                post.save();
+            return post;
+        }).then(room => resolve(room))
+            .catch(err => {
+                console.log("err : " + err);
+                reject({ status: 501, message: 'Internal Server Error !' })
+            })});
+exports.add_like = (room_ObjId, post_ObjId) =>
+    new Promise((resolve, reject) => {
+        post_model.find({$and:[
+                {_id : mongoose.Types.ObjectId(post_ObjId)},
+                {room_id : room_ObjId}
+            ]}).then(results => {
+            if(results.length === 0){
+                reject({ status: 400, message: '그런 게시글이 존재하지 않습니다.' })
+            }
+            var post = results[0];
+            post.like_cnt++;
+            post.save();
             return post;
         }).then(room => resolve(room))
             .catch(err => {
@@ -105,6 +125,18 @@ exports.update_post = (room_ObjId, post_ObjId, title, context, image_number,imag
 exports.get_all_post = (room_ObjId) =>
     new Promise((resolve, reject) => {
         post_model.find({room_id:room_ObjId}).then(results =>{
+            if(results.length === 0){
+                reject({ status: 400, message: '그런 게시글이 존재하지 않거나 행사 정보가 잘못되었습니다.' })
+            }
+            resolve(results)
+        }).catch(err => {
+            reject({ status: 500, message: 'Internal Server Error !' })
+        })});
+
+exports.get_top_3 = (room_ObjId) =>
+    new Promise((resolve, reject) => {
+        post_model.find({room_id:room_ObjId}).sort({view_cnt:-1}).limit(3)
+            .then(results =>{
             if(results.length === 0){
                 reject({ status: 400, message: '그런 게시글이 존재하지 않거나 행사 정보가 잘못되었습니다.' })
             }
