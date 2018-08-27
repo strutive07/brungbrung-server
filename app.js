@@ -24,6 +24,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use("/styles",express.static(__dirname + "/views/assets"));
 
 var login_register = require('./routes/login_register');
 var room = require('./routes/quest');

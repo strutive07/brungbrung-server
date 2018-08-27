@@ -29,7 +29,7 @@ const config = require('../config/config');
                 .then(result => {
                     const token = jwt.sign(result, config.secret, {expiresIn: 144000});
                     console.log('token : ' + token);
-                    res.status(result.status).json({id: result.message, token: token});
+                    res.status(result.status).json({id: result.message, token: token, user:result.user});
                 })
                 .catch(err => {
                     res.status(err.status).json({message: err.message})

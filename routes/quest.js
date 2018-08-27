@@ -217,19 +217,49 @@ router.post('/search_type', (req, res) => {
  *
  */
 
+router.post('/enter_web', (req, res) => {
+    var id = req.body.id;
+    var password = req.body.password;
+    var objId = req.body.objId;
+
+    console.log(id);
+    console.log(password);
+    if (id && password) {
+        db.connectDB().then(login.LoginUser(id, password)
+            .then(result => {
+                const token = jwt.sign(result, config.secret, {expiresIn: 144000});
+
+                db.connectDB().then(
+                    quest_info.append_user_in_quest(id, objId)
+                        .then(function(room) {
+                            quest_info.enter_quest(id, room)
+                                .then(user => {
+                                    console.log(user);
+                                    res.status(200).json({message: "success", results:user})
+                                });
+                        }).catch(err => {
+                        console.log('err : ' + err);
+                        res.status(err.status).json({message: err.message});
+                    })
+                );
+            })
+            .catch(err => {
+                res.status(err.status).json({message: err.message})
+            })
+        )
+    } else {
+        res.status(400).json({message: 'Invalid Request !'});
+    }
+})
+
+
+
 router.post('/enter/:id/:objId', (req, res) => {
     if (checkToken(req)) {
         const id = req.params.id;
         const objId = req.params.objId;
         if(id && objId){
-            // db.connectDB().then(
-            //     quest_info.enter_quest(id, objId)
-            //         .then(user =>{
-            //
-            //         }).catch(err => {
-            //             console.log('err : ' + err);
-            //             res.status(err.status).json({message: err.message});
-            //         }));
+
             db.connectDB().then(
                 quest_info.append_user_in_quest(id, objId)
                     .then(function(room) {
@@ -290,6 +320,26 @@ router.post('/enter/:id/:objId', (req, res) => {
  *           message :  "Internal Server Error !"
  *
  */
+
+router.get('/welcome/:objId', (req, res)=>{
+    const objId = req.params.objId;
+    if(objId){
+        db.connectDB().then(
+            quest_info.get_one_quest(objId)
+                .then(results =>{
+                    console.log(results);
+                    res.render('welcome', {title:"hi",json:results});
+                }).catch(err => {
+                console.log('err : ' + err);
+                res.status(err.status).json({message: err.message});
+            }));
+    }else{
+        res.status(401).json({message: 'Invalid Token! '});
+    }
+});
+
+
+
 
 router.get('/get_room/:objId', (req, res) => {
     const objId = req.params.objId;

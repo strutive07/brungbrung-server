@@ -1,0 +1,148 @@
+<!DOCTYPE HTML>
+<!--
+	Hyperspace by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+<head>
+    <title><%= json.title%></title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+    <link rel="stylesheet" href="/assets/css/main.css"/>
+    <noscript>
+        <link rel="stylesheet" href="/assets/css/noscript.css"/>
+    </noscript>
+</head>
+<body class="is-preload">
+
+<!-- Sidebar -->
+<section id="sidebar">
+    <div class="inner">
+        <nav>
+            <ul>
+                <li><a href="#intro">Welcome</a></li>
+                <li><a href="#one">Who we are</a></li>
+                <li><a href="#two">What we do</a></li>
+                <li><a href="#three">Get in touch</a></li>
+            </ul>
+        </nav>
+    </div>
+</section>
+
+<!-- Wrapper -->
+<div id="wrapper">
+
+    <!-- Intro -->
+    <section id="intro" class="wrapper style1 fullscreen fade-up">
+        <div class="inner">
+            <h1><%= json.title%></h1>
+            <p><%= json.context%></p>
+            <ul class="actions">
+                <li><a href="#one" class="button scrolly">참가하기</a></li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- One -->
+    <section id="one" class="wrapper style2 spotlights">
+        <section>
+            <a href="#" class="image"><img src= "<%= "http://ssumon.com:23002/images/" + json.images[0]%>" alt="" data-position="center center"/></a>
+            <div class="content">
+                <div class="inner">
+                    <h2>로그인</h2>
+                    <table>
+                        <tr>
+                            <td>아이디</td>
+                            <td><input type="text" name="id" id="id"></td>
+                        </tr>
+                        <tr>
+                            <td>비밀번호</td>
+                            <td><input type="password" name="password" id="password"></td>
+                        </tr>
+                        <input type="hidden" name="objId" id="objId" value="<%= json._id %>">
+                    </table>
+
+                    <ul class="actions">
+                        <li><a href="#three" class="button scrolly">완료</a></li>
+                        <li><a href="#two" class="button scrolly">회원가입</a></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </section>
+
+    <!-- Two -->
+    <section id="two" class="wrapper style3 fade-up">
+        <div class="inner">
+            <h2>회원가입</h2>
+            <table>
+                <tr>
+                    <td>아이디</td>
+                    <td><input type="text" name="id"></td>
+                </tr>
+                <tr>
+                    <td>비밀번호</td>
+                    <td><input type="password" name="pw"></td>
+                </tr>
+                <tr>
+                    <td>이메일</td>
+                    <td><input type="email" name="email"></td>
+                </tr>
+                <tr>
+                    <td>주소</td>
+                    <td><input type="text" name="address"></td>
+                </tr>
+                <tr>
+                    <td>생일</td>
+                    <td><input type="text" name="date" placeholder="990308"></td>
+                </tr>
+            </table>
+
+
+            <ul class="actions">
+                <li><a href="#three" class="button scrolly">회원가입</a></li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Three -->
+    <section id="three" class="wrapper style1 fade-up">
+        <div class="inner">
+            <h2>행사에 참여 완료!</h2>
+            <p>자세한 정보는 앱에서 확인해주세요</p>
+            <br>
+            <br>
+            <br>
+            <ul class="actions">
+                <li><a href="#three" class="button scrolly">앱으로 가기</a></li>
+            </ul>
+            <br>
+            <br>
+            <br>
+        </div>
+    </section>
+
+</div>
+
+<!-- Footer -->
+<footer id="footer" class="wrapper style1-alt">
+    <div class="inner">
+        <ul class="menu">
+            <li>&copy; Untitled. All rights reserved.</li>
+            <li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+        </ul>
+    </div>
+</footer>
+
+<!-- Scripts -->
+<script src="/assets/js/jquery.min.js"></script>
+<script src="/assets/js/jquery.scrollex.min.js"></script>
+<script src="/assets/js/jquery.scrolly.min.js"></script>
+<script src="/assets/js/browser.min.js"></script>
+<script src="/assets/js/breakpoints.min.js"></script>
+<script src="/assets/js/util.js"></script>
+<script src="/assets/js/main.js"></script>
+
+</body>
+</html>

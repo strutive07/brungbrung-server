@@ -13,7 +13,7 @@ exports.LoginUser = (id, password) =>
             }
         }).then(user =>{
             if(bcrypt.compareSync(password, user.hashed_password)){
-                resolve({ status: 200, message: id });
+                resolve({ status: 200, message: id , user:user});
             }else{
                 reject({ status: 401, message: 'Invalid Credentials !' });
             }
