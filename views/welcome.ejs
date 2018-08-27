@@ -152,7 +152,7 @@
         password = $('#login_password').val()
         objId = $('#login_objId').val()
         $.ajax({
-            url : 'http://localhost:23002/api/v1g1/room/go',
+            url : 'http://ssumon.com:23002/api/v1g1/room/go',
             type : "POST",
             data:JSON.stringify({id:id, password:password, objId:objId}),
             accept: "application/json",
