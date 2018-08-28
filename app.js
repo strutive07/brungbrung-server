@@ -99,7 +99,7 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error', {'error':error});
+  res.render('error', {'error':err});
 });
 var SocketIo = require('socket.io');
 const socketEvent = require('./functions/chat');
