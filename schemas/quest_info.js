@@ -11,7 +11,8 @@ const quest_info = mongoose.Schema({
     people_num : Number,
     users : Array,
     type:String,
-    images : Array
+    images : Array,
+    keywords : Array
 }, { usePushEach: true });
 
 module.exports = quest_info;

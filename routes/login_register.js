@@ -14,6 +14,7 @@ const profile = require('../functions/profile');
 const quest_complete_flow = require('../functions/quest_complete_flow');
 const password = require('../functions/password');
 const config = require('../config/config');
+const quest_info =require('../functions/quest_info');
 
 
 
@@ -106,6 +107,51 @@ const config = require('../config/config');
  */
 
 
+router.post('/registergo', (req, res) => {
+    const name = req.body.name;
+    var id = req.body.id;
+    const password = req.body.password;
+    const birth = req.body.birth;
+    const address = req.body.address;
+    const objId = req.body.objId;
+
+    console.log('name : ' + name);
+    console.log('id : ' + id);
+    console.log('password : ' + password);
+
+    if (!name || !id || !password || !name.trim() || !id.trim() || !password.trim()) {
+        res.status(400).json({message: 'Invalid Request !'});
+    } else {
+
+        db.connectDB().then(register.RegisterUser(name, id, password, birth, address)
+            .then(result => {
+                // console.log('name->' + name);
+                // console.log('email->' + id);
+                // res.setHeader('Location', '/users' + id);
+                // res.status(result.status).json({message: result.message});
+                console.log('ho');
+                db.connectDB().then(
+                    quest_info.append_user_in_quest(id, objId)
+                        .then(function(room) {
+                            quest_info.enter_quest(id, room)
+                                .then(user => {
+                                    console.log(user);
+                                    res.status(200).json({message: "success", results:user})
+                                });
+                        }).catch(err => {
+                        console.log('err : ' + err);
+                        res.status(err.status).json({message: err.message});
+                    })
+                );
+            })
+            .catch(err => {
+                console.log(err)
+                res.status(err.status).json({message: err.message});
+            })
+        );
+    }
+});
+
 
 router.post('/register', (req, res) => {
         const name = req.body.name;
@@ -135,7 +181,6 @@ router.post('/register', (req, res) => {
             );
         }
     });
-
 /**
  * @swagger
  * /user/register:

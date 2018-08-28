@@ -79,29 +79,29 @@
             <table>
                 <tr>
                     <td>아이디</td>
-                    <td><input type="text" name="id"></td>
+                    <td><input type="text" name="name" id="reg_id"></td>
                 </tr>
                 <tr>
                     <td>비밀번호</td>
-                    <td><input type="password" name="pw"></td>
+                    <td><input type="password" name="pw" id="reg_password"></td>
                 </tr>
                 <tr>
-                    <td>이메일</td>
-                    <td><input type="email" name="email"></td>
+                    <td>닉네임 또는 이름</td>
+                    <td><input type="email" name="email" id="reg_name"></td>
                 </tr>
                 <tr>
                     <td>주소</td>
-                    <td><input type="text" name="address"></td>
+                    <td><input type="text" name="address" id="reg_address"></td>
                 </tr>
                 <tr>
                     <td>생일</td>
-                    <td><input type="text" name="date" placeholder="990308"></td>
+                    <td><input type="text" name="date" placeholder="990308" id="reg_birthday"></td>
                 </tr>
             </table>
 
 
             <ul class="actions">
-                <li><a href="#three" class="button scrolly">회원가입</a></li>
+                <li><a href="#three" class="button scrolly2" id="reg_button">회원가입</a></li>
             </ul>
         </div>
     </section>
@@ -164,6 +164,33 @@
                 $('#two').hide();
                 $('#li_two').hide();
                 $('#login_container').hide();
+            },
+            error: function(jqXHR,textStatus,errorThrown) {
+            }
+        });
+    })
+
+    $('body').on('click', '#reg_button', function() {
+        name = $('#reg_name').val()
+        id = $('#reg_id').val()
+        password = $('#reg_password').val()
+        birth = $('#reg_birthday').val()
+        address = $('#reg_address').val()
+        objId = $('#login_objId').val()
+
+
+        $.ajax({
+            url : 'http://ssumon.com:23002/api/v1g1/user/register',
+            type : "POST",
+            data:JSON.stringify({id:id, password:password, objId:objId, name:name, birth:birth,address:address}),
+            accept: "application/json",
+            contentType: "application/json",
+            dataType: "json",
+            success: function(data) {
+                id = $('#login_id').val(id)
+                password = $('#login_password').val(password)
+                offset = $("#one" ).offset();
+                $('html, body').animate({scrollTop : offset.top}, 400);
             },
             error: function(jqXHR,textStatus,errorThrown) {
             }

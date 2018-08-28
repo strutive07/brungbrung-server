@@ -20,7 +20,7 @@ const multer = require('multer');
 const uniqid = require('uniqid');
 require('babel-polyfill');
 var brandedQRCode = require('branded-qr-code');
-
+const python_shell = require('python-shell');
 
 router.get('/', (req, res) => res.end('I choose you! (Server)\nMade by ssu.software.17.Wonjun Jang\nquest routes'));
 
@@ -458,6 +458,10 @@ router.get('/get_room_all', (req, res) => {
  *           message :  "Internal Server Error !"
  *
  */
+
+
+
+
 
     // router.post('/push/:id/:older_id/:quest_id', (req, res) => {
     //     if (checkToken(req)) {
