@@ -107,16 +107,19 @@ router.post('/create', multer({storage:storage}).array('images', 20), (req, res)
  *
  */
 
-router.post('/update', (req, res) => {
+router.post('/update',  multer({storage:storage}).array('images', 20), (req, res) => {
     var room_id = req.body.room_id;
     var post_ObjId = req.body.post_ObjId;
     var title = req.body.title;
     var context = req.body.context;
     var images_cnt = req.body.images_cnt;
-    var images_array = req.body.images;
+    var images_list = [];
+    req.files.forEach((element) => {
+        images_list.push(element.filename);
+    });
 
     db.connectDB().then(
-        post_functions.update_post(room_id,post_ObjId, title,context,images_cnt,images_array)
+        post_functions.update_post(room_id,post_ObjId, title,context,images_cnt,images_list)
             .then(result => {
                 res.status(200).json({message: "success", results: result});
             })

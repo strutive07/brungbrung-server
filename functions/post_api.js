@@ -115,7 +115,9 @@ exports.update_post = (room_ObjId, post_ObjId, title, context, image_number,imag
             post.title = title;
             post.context = context;
             post.images_cnt = image_number;
-            post.images = image_array;
+            for(var i = 0; i < image_array.length; i++){
+                post.images.push(image_array[i]);
+            }
             post.save();
             return post;
         }).then(room => resolve(room))
