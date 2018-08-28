@@ -28,7 +28,7 @@ exports.create_survey = (room_id, surveys) =>
 
         for(var i = 0; i<survey_len; i++){
             if(surveys[i].type == 2){
-                var tmp_json = surveys[i];
+                var tmp_json = JSON.parse(JSON.stringify(surveys[i]));
                 tmp_json.write_string = []
                 survey_result.push(tmp_json);
             }else{
