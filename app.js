@@ -29,6 +29,7 @@ app.set("/styles",express.static(__dirname + "/views/assets"));
 var login_register = require('./routes/login_register');
 var room = require('./routes/quest');
 var post_apis = require('./routes/post');
+var survey = require('./routes/survey');
 
 const swaggerJSDoc = require('swagger-jsdoc')
 // Swagger definition
@@ -78,6 +79,7 @@ app.use('/api/v1g1/user', login_register);
 app.use('/api/v1g1/room', room);
 app.use('/api/v1g1/post', post_apis);
 app.use('/images', express.static('uploads'));
+app.use('/api/v1g1/survey', survey);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
