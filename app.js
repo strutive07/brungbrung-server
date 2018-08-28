@@ -12,8 +12,8 @@ var app = express();
 const router = express.Router();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
+// app.set('views', path.join(__dirname, 'views'));
+// app.set('view engine', 'ejs');
 global.__basedir = __dirname;
 
 // uncomment after placing your favicon in /public
