@@ -103,7 +103,7 @@ exports.submit_survey = (room_id, surveys) =>
             for(var i=0; i<tmp_list.length; i++){
                 survey_one.survey.set(i,tmp_list[i]);
             }
-            
+
             console.log(survey_one);
             survey_one.save();
             console.log(survey_one);

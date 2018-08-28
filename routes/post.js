@@ -50,6 +50,7 @@ router.post('/create', multer({storage:storage}).array('images', 20), (req, res)
         req.files.forEach((element) => {
             images_list.push(element.filename);
         });
+        console.log(room_id,user_auth_id,user_name,title,context,images_cnt)
 
         console.log(req.files);
             db.connectDB().then(
