@@ -27,13 +27,16 @@ exports.create_survey = (room_id, surveys) =>
         var survey_result = [];
 
         for(var i = 0; i<survey_len; i++){
-            if(surveys[i].type == 2){
-                var tmp_json = JSON.parse(JSON.stringify(surveys[i]));
-                tmp_json.write_string = []
-                survey_result.push(tmp_json);
-            }else{
-                survey_result.push(surveys[i]);
-            }
+            var tmp_json = JSON.parse(JSON.stringify(surveys[i]));
+            tmp_json.write_string = []
+            survey_result.push(tmp_json);
+            // if(surveys[i].type == 2){
+            //     var tmp_json = JSON.parse(JSON.stringify(surveys[i]));
+            //     tmp_json.write_string = []
+            //     survey_result.push(tmp_json);
+            // }else{
+            //     survey_result.push(surveys[i]);
+            // }
         }
 
         const new_survey = new survey({
